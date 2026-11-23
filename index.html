@@ -1,0 +1,2052 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="TECHMITRA — Modern Engineering, Coding and Academic Learning Platform">
+  <title>TECHMITRA — Modern Learning for Future Builders</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & Manrope -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. DESIGN TOKENS & SYSTEM VARIABLES (2026 SaaS SPEC)
+       ========================================================================== */
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-faint: #94a3b8;
+
+      --brand-primary: #e11d48;
+      --brand-primary-hover: #be123c;
+      --brand-gradient: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      --brand-subtle: #fff1f2;
+      --brand-border: #fecdd3;
+      --brand-glow: rgba(225, 29, 72, 0.22);
+
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --border-medium: rgba(15, 23, 42, 0.14);
+
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+      --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+      --shadow-hover: 0 16px 32px -4px rgba(225, 29, 72, 0.15), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --shadow-modal: 0 24px 60px -12px rgba(15, 23, 42, 0.25);
+
+      --transition-base: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 88px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+      width: 100%;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body.drawer-open {
+      overflow: hidden !important;
+      touch-action: none;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .container {
+      width: min(1200px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+
+    .ambient-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 600px;
+      background: radial-gradient(circle at 50% -80px, rgba(225, 29, 72, 0.09) 0%, rgba(225, 29, 72, 0.02) 45%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       2. TASK 1: NAVIGATION & RESPONSIVE BREAKPOINT SYSTEM
+       ========================================================================== */
+    .nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .navbar {
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-heading);
+      font-weight: 900;
+      font-size: 21px;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .brand img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      padding: 1px;
+    }
+    .brand span { color: var(--text-primary); }
+    .brand b { color: var(--brand-primary); }
+
+    /* Desktop Navigation (>= 1024px) */
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(16px, 2.2vw, 32px);
+    }
+    .desktop-nav a {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      position: relative;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+    .desktop-nav a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 100%;
+      bottom: 0;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--brand-primary);
+      transition: right 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .desktop-nav a:hover { color: var(--brand-primary); }
+    .desktop-nav a:hover::after { right: 0; }
+
+    /* Topbar Actions */
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 700;
+      min-height: 48px;
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      transition: var(--transition-base);
+      white-space: nowrap;
+      border: none;
+    }
+
+    .btn-admin {
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      padding: 8px 16px;
+      font-size: 13px;
+      min-height: 44px;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-admin svg { color: var(--brand-primary); }
+    .btn-admin:hover {
+      border-color: var(--brand-border);
+      color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #ffffff !important;
+      padding: 10px 22px;
+      font-size: 13.5px;
+      box-shadow: 0 4px 14px var(--brand-glow);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.35);
+      filter: brightness(1.04);
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      padding: 10px 22px;
+      font-size: 13.5px;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-outline:hover {
+      border-color: var(--brand-border);
+      color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+
+    /* 3-Line Hamburger Button with >=48px Touch Target */
+    .menu-toggle {
+      display: none;
+      width: 48px;
+      height: 48px;
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 22px;
+      color: var(--text-primary);
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Slide-out Mobile & Tablet Navigation Drawer (z-index: 10001) */
+    .drawer-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .drawer-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      bottom: 0;
+      width: min(340px, 86vw);
+      background: #ffffff;
+      z-index: 10001;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.16);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 20px;
+      transition: right 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .mobile-drawer.open {
+      right: 0;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .btn-close-drawer {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-subtle);
+      border: none;
+      border-radius: var(--radius-pill);
+      display: grid;
+      place-items: center;
+      color: var(--text-secondary);
+      font-size: 18px;
+    }
+
+    .drawer-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 16px;
+      list-style: none;
+    }
+    .drawer-menu a {
+      display: flex;
+      align-items: center;
+      min-height: 48px;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      transition: var(--transition-base);
+    }
+    .drawer-menu a:hover,
+    .drawer-menu a:focus {
+      background: var(--brand-subtle);
+      color: var(--brand-primary);
+      padding-left: 20px;
+    }
+
+    .drawer-footer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .drawer-footer-actions .btn {
+      width: 100%;
+      min-height: 48px;
+    }
+
+    /* ==========================================================================
+       3. HERO SECTION & VISUAL MODERNIZATION
+       ========================================================================== */
+    .hero-wrap {
+      position: relative;
+      overflow: hidden;
+      padding: 56px 0 48px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--brand-subtle);
+      border: 1px solid var(--brand-border);
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--brand-primary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      box-shadow: 0 0 8px var(--brand-primary);
+    }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 4.4vw, 58px);
+      font-weight: 900;
+      letter-spacing: -2px;
+      line-height: 1.12;
+      margin-bottom: 18px;
+      color: var(--text-primary);
+    }
+    .highlight {
+      background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-copy p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 26px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-mini {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 26px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .avatar-stack {
+      display: flex;
+      padding-left: 4px;
+    }
+    .avatar-stack span {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      background: var(--brand-subtle);
+      color: var(--brand-primary);
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 800;
+      margin-left: -6px;
+    }
+
+    /* Hero Preview Graphic Art */
+    .hero-art {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 380px;
+    }
+    .art-circle {
+      position: absolute;
+      width: min(380px, 92%);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(225, 29, 72, 0.14) 0%, rgba(225, 29, 72, 0.02) 65%, transparent 75%);
+    }
+    .art-card {
+      position: relative;
+      width: min(360px, 96%);
+      padding: 24px;
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      z-index: 2;
+    }
+    .art-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .art-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+    }
+    .art-card h3 {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+    .art-card p {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .art-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      margin-top: 12px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+    }
+    .art-row-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--brand-subtle);
+      color: var(--brand-primary);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .float-badge {
+      position: absolute;
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-card);
+      z-index: 3;
+    }
+    .float-badge small {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .float-badge-top { right: 4%; top: 18px; }
+    .float-badge-bottom { left: 4%; bottom: 18px; }
+
+    /* ==========================================================================
+       4. TRUST BAR & SECTION HEADERS
+       ========================================================================== */
+    .trust-wrap {
+      background: #ffffff;
+      border-block: 1px solid var(--border-subtle);
+      padding: 20px 0;
+    }
+    .trust-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .trust-item svg {
+      width: 18px;
+      height: 18px;
+      color: var(--brand-primary);
+    }
+
+    .section {
+      padding: 72px 0;
+    }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .kicker {
+      font-size: 11px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: var(--brand-primary);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(28px, 3.4vw, 40px);
+      font-weight: 900;
+      letter-spacing: -1.2px;
+      line-height: 1.2;
+    }
+    .section-subtitle {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 580px;
+      margin-top: 6px;
+    }
+
+    /* ==========================================================================
+       5. TASK 2: COURSE CARDS & FILTER TABS (MOBILE-FIRST POLISH)
+       ========================================================================== */
+    .catalog-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .search-wrap {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      height: 48px;
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-pill);
+      padding: 10px 18px 10px 44px;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-base);
+    }
+    .search-input:focus {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px var(--brand-glow);
+    }
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      color: var(--text-faint);
+      pointer-events: none;
+    }
+
+    /* Horizontally Scrollable Filter Strip */
+    .category-pills {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .category-pills::-webkit-scrollbar { display: none; }
+
+    .category-pill {
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      min-height: 48px;
+      padding: 10px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: var(--transition-base);
+      box-shadow: var(--shadow-sm);
+    }
+    .category-pill:hover {
+      border-color: var(--brand-border);
+      color: var(--brand-primary);
+    }
+    .category-pill.active {
+      background: var(--text-primary);
+      border-color: var(--text-primary);
+      color: #ffffff;
+    }
+
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .course-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-base);
+    }
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--brand-border);
+    }
+
+    .course-thumb-box {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      background: #0f172a;
+      overflow: hidden;
+    }
+    .course-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .course-card:hover .course-thumb-box img {
+      transform: scale(1.04);
+    }
+
+    /* Refined Pastel Badges */
+    .badge-pill-pastel {
+      position: absolute;
+      top: 10px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .badge-category {
+      left: 10px;
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--brand-primary);
+      border: 1px solid var(--brand-border);
+      text-transform: uppercase;
+    }
+    .badge-price {
+      right: 10px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .course-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .course-card-body h3 {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .course-card-body p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .instructor-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Skeleton Loading State */
+    .skeleton-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .skeleton-thumb {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-md);
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: skeletonShimmer 1.5s infinite;
+    }
+    .skeleton-line {
+      height: 14px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: skeletonShimmer 1.5s infinite;
+    }
+    @keyframes skeletonShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .empty-state-box {
+      grid-column: 1 / -1;
+      background: #ffffff;
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 48px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       6. ECOSYSTEM & ROADMAP SECTIONS
+       ========================================================================== */
+    .features-wrap {
+      background: #ffffff;
+      border-block: 1px solid var(--border-subtle);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+      transition: var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--brand-border);
+    }
+    .feature-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--brand-subtle);
+      color: var(--brand-primary);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 16px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      width: fit-content;
+    }
+
+    .career-panel {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow: var(--shadow-card);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: center;
+    }
+    .career-tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .career-tag-pill {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* ==========================================================================
+       7. TASK 3: UPGRADED AI TUTOR ("MITRA") WIDGET
+       ========================================================================== */
+    #mitraFloatingWidget {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+    }
+
+    #btnToggleMitra {
+      min-height: 48px;
+      min-width: 48px;
+      padding: 12px 22px;
+      border-radius: var(--radius-pill);
+      background: linear-gradient(135deg, #e11d48 0%, #0f172a 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 800;
+      font-size: 13.5px;
+      box-shadow: 0 8px 24px var(--brand-glow), var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition-base);
+    }
+    #btnToggleMitra:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(225, 29, 72, 0.35);
+    }
+
+    #mitraChatWindow {
+      display: none;
+      width: 380px;
+      height: 520px;
+      max-width: calc(100vw - 32px);
+      background: #ffffff;
+      border: 1px solid var(--border-medium);
+      border-radius: 20px;
+      box-shadow: var(--shadow-modal);
+      flex-direction: column;
+      overflow: hidden;
+      margin-bottom: 12px;
+      animation: modalSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .mitra-head {
+      padding: 14px 18px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mitra-avatar-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mitra-bot-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+    }
+    .mitra-status-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+
+    .mitra-stream {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-base);
+    }
+
+    /* Message Bubbles & Markdown Formatting */
+    .mitra-bubble {
+      max-width: 88%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .mitra-bubble.bot {
+      align-self: flex-start;
+      background: #ffffff;
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-bottom-left-radius: 3px;
+      box-shadow: var(--shadow-sm);
+    }
+    .mitra-bubble.user {
+      align-self: flex-end;
+      background: var(--brand-gradient);
+      color: #ffffff;
+      border-bottom-right-radius: 3px;
+    }
+
+    .mitra-bubble pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      margin: 8px 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .mitra-bubble code {
+      background: rgba(15, 23, 42, 0.08);
+      color: var(--brand-primary);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+    .mitra-bubble.user code {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+    .mitra-bubble ul {
+      margin-left: 18px;
+      margin-top: 6px;
+    }
+
+    /* Typing indicator animation */
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      height: 16px;
+    }
+    .typing-dots span {
+      width: 6px;
+      height: 6px;
+      background: var(--brand-primary);
+      border-radius: 50%;
+      animation: bounceDot 1.4s infinite ease-in-out both;
+    }
+    .typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounceDot {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    /* Starter prompt chips */
+    .mitra-chips-row {
+      display: flex;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .mitra-chips-row::-webkit-scrollbar { display: none; }
+    .mitra-chip {
+      padding: 8px 14px;
+      min-height: 36px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      transition: var(--transition-base);
+    }
+    .mitra-chip:hover {
+      background: var(--brand-subtle);
+      color: var(--brand-primary);
+    }
+
+    .mitra-foot {
+      padding: 10px 14px;
+      background: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 8px;
+    }
+    .mitra-foot input {
+      flex: 1;
+      height: 48px;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-medium);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .mitra-foot input:focus { border-color: var(--brand-primary); }
+
+    /* ==========================================================================
+       8. FOOTER
+       ========================================================================== */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .footer-links a:hover { color: var(--brand-primary); }
+
+    /* ==========================================================================
+       9. RESPONSIVE MEDIA QUERIES (DESKTOP, TABLET, MOBILE)
+       ========================================================================== */
+
+    /* Desktop (>= 1024px) */
+    @media (min-width: 1024px) {
+      .desktop-nav { display: flex; }
+      .menu-toggle { display: none !important; }
+      .desktop-only-action { display: inline-flex !important; }
+    }
+
+    /* Tablet (768px - 1023px) */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .desktop-nav { display: none; }
+      .menu-toggle { display: flex; }
+      .desktop-only-action { display: inline-flex; }
+
+      .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .hero { grid-template-columns: 1fr; padding-top: 36px; }
+      .career-panel { grid-template-columns: 1fr; }
+    }
+
+    /* Mobile (< 768px) */
+    @media (max-width: 767px) {
+      .container { width: calc(100% - 32px); }
+      .navbar { height: 68px; }
+
+      /* Strictly remove Admin and Login from mobile topbar */
+      .desktop-nav,
+      .desktop-only-action {
+        display: none !important;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 24px;
+        gap: 32px;
+      }
+      .hero-art { min-height: 310px; }
+      .art-circle { width: 280px; }
+      .float-badge-top { right: 0; top: 10px; }
+      .float-badge-bottom { left: 0; bottom: 10px; }
+
+      .course-grid,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section { padding: 48px 0; }
+      .section-head { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+      .catalog-controls { gap: 10px; }
+      .search-wrap { min-width: 100%; }
+      .hero-actions .btn { width: 100%; }
+
+      .career-panel { padding: 24px; }
+      footer .footer-inner { flex-direction: column; align-items: flex-start; }
+
+      /* Mobile Chat Window Fullsheet */
+      #mitraFloatingWidget { bottom: 16px; right: 16px; }
+      #mitraChatWindow {
+        width: calc(100vw - 32px);
+        height: min(540px, 82vh);
+        right: 0;
+        bottom: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+
+  <!-- Slide-out Mobile & Tablet Navigation Drawer -->
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation Drawer">
+    <div>
+      <div class="drawer-header">
+        <div class="brand">
+          <img src="logo.png" alt="TECHMITRA Logo" onerror="this.style.display='none'">
+          <span>TECH<b>MITRA</b></span>
+        </div>
+        <button type="button" class="btn-close-drawer" id="btnCloseDrawer" aria-label="Close navigation menu">✕</button>
+      </div>
+
+      <nav>
+        <ul class="drawer-menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="#courses">Courses</a></li>
+          <li><a href="#resources">Resources</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Drawer Mobile Actions (Admin Console + Student Login) -->
+    <div class="drawer-footer-actions">
+      <a class="btn btn-admin" href="admin-login.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>Admin Console</span>
+      </a>
+      <a class="btn btn-primary" id="drawerAuthActionBtn" href="login.html">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+        <span>Student Login</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ==========================================================================
+       HEADER & NAVBAR
+       ========================================================================== -->
+  <div class="nav-wrap">
+    <header class="navbar container">
+      <a class="brand" href="#home">
+        <img src="logo.png" alt="TECHMITRA Logo" onerror="this.style.display='none'">
+        <span>TECH<b>MITRA</b></span>
+      </a>
+
+      <!-- Desktop Nav Links (Visible >= 1024px) -->
+      <nav class="desktop-nav" aria-label="Main Navigation">
+        <a href="#home">Home</a>
+        <a href="about.html">About</a>
+        <a href="#courses">Courses</a>
+        <a href="#resources">Resources</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <!-- Desktop & Tablet Actions -->
+      <div class="nav-actions">
+        <a class="btn btn-admin desktop-only-action" href="admin-login.html" title="Administrator Console">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          <span>Admin</span>
+        </a>
+
+        <a class="btn btn-primary desktop-only-action" id="mainAuthActionBtn" href="login.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+          <span>Login</span>
+        </a>
+
+        <!-- Hamburger Icon (Tablet & Mobile) -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation menu" aria-expanded="false">☰</button>
+      </div>
+    </header>
+  </div>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <section class="hero-wrap" id="home">
+      <div class="hero container">
+        <div class="hero-copy">
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            <span>Learn • Build • Grow with TECHMITRA</span>
+          </div>
+          <h1>Learning is the <br><span class="highlight">best catalyst</span> for your career.</h1>
+          <p>Master college curricula, programming tracks, and engineering fundamentals. Structured video classrooms, verified Drive notes, and self-assessment test suites at your pace.</p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#courses">Explore Courses →</a>
+            <a class="btn btn-outline" href="about.html">About Curriculum</a>
+          </div>
+
+          <div class="hero-mini">
+            <div class="avatar-stack">
+              <span>⌘</span><span>☁</span><span>∑</span>
+            </div>
+            <span>Empowering curious minds and future engineers</span>
+          </div>
+        </div>
+
+        <!-- Hero Preview Graphic Art -->
+        <div class="hero-art">
+          <div class="art-circle"></div>
+
+          <div class="float-badge float-badge-top">
+            ✧ Interactive Classroom
+            <small>Integrated Video, Notes &amp; Quiz</small>
+          </div>
+
+          <div class="art-card">
+            <div class="art-top">
+              <span style="font-size:11px;font-weight:800;color:var(--text-muted);letter-spacing:0.5px;">STUDENT WORKSPACE</span>
+              <span class="art-badge-live">● Live Cloud</span>
+            </div>
+            <h3>Structured learning, simplified.</h3>
+            <p>Every concept backed with real code examples and self-testing modules.</p>
+
+            <div class="art-preview-row">
+              <div class="art-row-icon">⌘</div>
+              <div>
+                <strong style="font-size:13px;display:block;">Full-Stack &amp; Systems</strong>
+                <small style="font-size:11.5px;color:var(--text-muted);">From foundational syntax to deployment</small>
+              </div>
+            </div>
+
+            <div class="art-preview-row">
+              <div class="art-row-icon">∑</div>
+              <div>
+                <strong style="font-size:13px;display:block;">Core Engineering Tracks</strong>
+                <small style="font-size:11.5px;color:var(--text-muted);">Mathematics, Physics &amp; Network Architecture</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="float-badge float-badge-bottom">
+            ✓ Verified Learning
+            <small>Self-Paced Accreditation</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         METRICS / TRUST STRIP
+         ========================================================================== */
+    <div class="trust-wrap">
+      <div class="container trust-grid">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          <span>Modern Programming</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+          <span>Linux &amp; Systems</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+          <span>Cloud &amp; DevOps</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+          <span>College Academic Subjects</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================================================
+         COURSES SECTION (DEDUPLICATED, SKELETON LOADER & CLEAN TITLES)
+         ========================================================================== -->
+    <section class="section container" id="courses">
+      <div class="section-head">
+        <div>
+          <div class="kicker">CURATED CATALOG</div>
+          <h2 class="section-title">Choose your next learning track.</h2>
+          <p class="section-subtitle">Explore curated courses and practical learning tracks. Sign in to track your progress and access course materials.</p>
+        </div>
+        <a class="btn btn-outline" href="login.html" style="font-size:13px;">Sign In to Track Progress →</a>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="catalog-controls">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input class="search-input" id="courseSearch" type="search" placeholder="Search by course title or instructor...">
+        </div>
+        <div class="category-pills" id="dynamicCategoryFilters">
+          <button type="button" class="category-pill active" data-category="All">All Disciplines</button>
+        </div>
+      </div>
+
+      <!-- Dynamic Course Cards Grid with Skeletons -->
+      <div class="course-grid" id="liveCoursesContainer">
+        <!-- Initial Skeleton Shimmer Cards -->
+        <div class="skeleton-card">
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-line" style="width:70%;"></div>
+          <div class="skeleton-line" style="width:90%;"></div>
+          <div class="skeleton-line" style="width:40%;"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-line" style="width:70%;"></div>
+          <div class="skeleton-line" style="width:90%;"></div>
+          <div class="skeleton-line" style="width:40%;"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-line" style="width:70%;"></div>
+          <div class="skeleton-line" style="width:90%;"></div>
+          <div class="skeleton-line" style="width:40%;"></div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-thumb"></div>
+          <div class="skeleton-line" style="width:70%;"></div>
+          <div class="skeleton-line" style="width:90%;"></div>
+          <div class="skeleton-line" style="width:40%;"></div>
+        </div>
+      </div>
+
+      <!-- Empty State Indicator -->
+      <div class="empty-state-box" id="noResults" style="display:none;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--brand-primary)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        <h4 style="font-size:16px;font-weight:800;">No matching courses found</h4>
+        <p style="font-size:13px;color:var(--text-muted);">Try adjusting your search query or choosing another category.</p>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         ECOSYSTEM FEATURES SECTION
+         ========================================================================== -->
+    <section class="section features-wrap" id="resources">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="kicker">ACADEMIC ECOSYSTEM</div>
+            <h2 class="section-title">Everything designed to support your growth.</h2>
+            <p class="section-subtitle">Beyond video lectures: integrated documents, practical assessments, and immediate assistance.</p>
+          </div>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">📄</div>
+              <h3>PDF Notes &amp; Formulas</h3>
+              <p>Subject cheat-sheets, high-resolution formula sheets, and curated reference readings.</p>
+            </div>
+            <span class="feature-tag">IN-DASHBOARD ACCESS</span>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">📝</div>
+              <h3>Interactive MCQs</h3>
+              <p>Real-time self-assessment with instant answer evaluation, explanations, and score tracking.</p>
+            </div>
+            <span class="feature-tag">PLAYER INTEGRATED</span>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">🎓</div>
+              <h3>Accredited Certificates</h3>
+              <p>Downloadable completion credentials featuring verified verification IDs for your portfolio.</p>
+            </div>
+            <span class="feature-tag">VERIFIED CREDENTIALS</span>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">🤖</div>
+              <h3>MITRA AI Tutor</h3>
+              <p>24/7 intelligent study companion explaining complex coding syntax and core subjects.</p>
+            </div>
+            <button type="button" class="btn btn-outline" style="font-size:12px;padding:8px 16px;margin-top:14px;width:fit-content;min-height:40px;" onclick="openMitraBot()">Chat with MITRA 🤖</button>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">📊</div>
+              <h3>Student Progress Tracker</h3>
+              <p>Track completed video chapters, self-study streaks, and learning hour metrics.</p>
+            </div>
+            <span class="feature-tag">PORTAL DASHBOARD</span>
+          </article>
+
+          <article class="feature-card">
+            <div>
+              <div class="feature-icon-box">💬</div>
+              <h3>Faculty Support</h3>
+              <p>Direct communication channel with instructors for doubts clarification and mentorship.</p>
+            </div>
+            <span class="feature-tag">1-ON-1 SYNC</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         CAREER SECTION
+         ========================================================================== -->
+    <section class="section container" id="career">
+      <div class="career-panel">
+        <div>
+          <div class="kicker">OPPORTUNITIES &amp; ROADMAPS</div>
+          <h2 class="section-title">Build skills for what's next.</h2>
+          <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;margin-top:8px;">Structured learning roadmaps designed to help you transition from student fundamentals to industry-ready competencies.</p>
+          <div class="career-tags-row">
+            <span class="career-tag-pill">Scholarships Guidance</span>
+            <span class="career-tag-pill">Internships Preparation</span>
+            <span class="career-tag-pill">Open Courseware</span>
+            <span class="career-tag-pill">Skill Certifications</span>
+            <span class="career-tag-pill">Engineering Roadmaps</span>
+          </div>
+        </div>
+        <a href="#courses" class="btn btn-primary" style="padding:12px 24px;">Explore Learning Tracks →</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       TASK 3: UPGRADED MITRA AI ASSISTANT WIDGET & CHAT MODAL
+       ========================================================================== -->
+  <div id="mitraFloatingWidget">
+    <div id="mitraChatWindow" role="dialog" aria-modal="true" aria-labelledby="mitraTitle">
+      <div class="mitra-head">
+        <div class="mitra-avatar-box">
+          <div class="mitra-bot-avatar">🤖</div>
+          <div>
+            <h4 id="mitraTitle" style="font-size:14px;font-weight:800;">MITRA AI Tutor</h4>
+            <span style="font-size:11px;font-weight:700;color:#059669;display:flex;align-items:center;gap:4px;">
+              <span class="mitra-status-dot"></span> Online Study Buddy
+            </span>
+          </div>
+        </div>
+        <button type="button" id="btnCloseMitra" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);min-height:44px;min-width:44px;" aria-label="Close AI Chat">✕</button>
+      </div>
+
+      <div class="mitra-stream" id="mitraStream" aria-live="polite">
+        <div class="mitra-bubble bot">
+          👋 <strong>Hello!</strong> I am <strong>MITRA</strong>, your intelligent AI Tutor on TECHMITRA.<br><br>
+          I can explain core concepts in computer science, debug syntax errors, or review foundational subjects. Select a starter prompt below or enter any topic!
+        </div>
+      </div>
+
+      <!-- Starter Prompt Chips -->
+      <div class="mitra-chips-row">
+        <button type="button" class="mitra-chip" onclick="askMitraPrompt('Explain Linux File Permissions with octal notation')">🐧 Linux Permissions</button>
+        <button type="button" class="mitra-chip" onclick="askMitraPrompt('Difference between TCP and UDP with real-world analogies')">🌐 TCP vs UDP</button>
+        <button type="button" class="mitra-chip" onclick="askMitraPrompt('What should I learn first in Cloud Computing?')">☁ Cloud Roadmap</button>
+        <button type="button" class="mitra-chip" onclick="askMitraPrompt('How do pointers and memory allocation work in C++?')">⚡ C++ Pointers</button>
+      </div>
+
+      <form class="mitra-foot" id="mitraForm">
+        <input type="text" id="mitraInput" placeholder="Ask MITRA any engineering or coding question..." required autocomplete="off">
+        <button type="submit" class="btn btn-primary" style="padding:0 20px;min-height:44px;font-size:13px;">Ask</button>
+      </form>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button type="button" id="btnToggleMitra" aria-label="Open MITRA AI Tutor">
+      <span style="font-size:17px;">🤖</span>
+      <span>Ask MITRA AI</span>
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       FOOTER
+       ========================================================================== -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="brand">
+        <img src="logo.png" alt="TECHMITRA Logo" onerror="this.style.display='none'">
+        <span>TECH<b>MITRA</b></span>
+      </div>
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="about.html">About</a>
+        <a href="#courses">Courses</a>
+        <a href="contact.html">Contact</a>
+        <a href="admin-login.html" style="color:var(--brand-primary);font-weight:800;">Admin Console</a>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);">© <span id="year"></span> TECHMITRA. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       FIREBASE INTEGRATION, DEDUPLICATION & COURSE RENDERER
+       ========================================================================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAaELTyJ7Z_Ku53tBldsMYOGscPSe-OrHg",
+      authDomain: "techmitra-web.firebaseapp.com",
+      projectId: "techmitra-web",
+      storageBucket: "techmitra-web.firebasestorage.app",
+      messagingSenderId: "214838320813",
+      appId: "1:214838320813:web:efef413add99454416f024",
+      measurementId: "G-TDDT23B9XN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const FALLBACK_THUMB = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=80';
+
+    let isUserLoggedIn = false;
+    let allCourses = [];
+    let selectedCategory = 'All';
+
+    const container = document.getElementById('liveCoursesContainer');
+    const searchInput = document.getElementById('courseSearch');
+    const dynamicFilterBox = document.getElementById('dynamicCategoryFilters');
+    const emptyNotice = document.getElementById('noResults');
+    const mainAuthActionBtn = document.getElementById('mainAuthActionBtn');
+    const drawerAuthActionBtn = document.getElementById('drawerAuthActionBtn');
+
+    // Canonical Title Normalizer
+    const titleDictionary = {
+      'port': 'Computer Networking & Ports',
+      'linux fundamental': 'Linux Fundamentals',
+      'linux fundamentals': 'Linux Fundamentals',
+      'cpp programming': 'C++ Programming Masterclass',
+      'c++ programming': 'C++ Programming Masterclass',
+      'python': 'Python Programming Masterclass',
+      'web dev': 'Full Stack Web Development'
+    };
+
+    function normalizeTitle(raw) {
+      if (!raw) return 'Foundational Course';
+      const clean = raw.trim();
+      const lower = clean.toLowerCase();
+      return titleDictionary[lower] || clean;
+    }
+
+    // 1. Auth State Management (Desktop & Mobile Drawer synchronizer)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isUserLoggedIn = true;
+        const dashboardHtml = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          <span>Dashboard ➔</span>
+        `;
+        if (mainAuthActionBtn) {
+          mainAuthActionBtn.innerHTML = dashboardHtml;
+          mainAuthActionBtn.href = "dashboard.html";
+        }
+        if (drawerAuthActionBtn) {
+          drawerAuthActionBtn.innerHTML = dashboardHtml;
+          drawerAuthActionBtn.href = "dashboard.html";
+        }
+      } else {
+        isUserLoggedIn = false;
+        const loginHtml = `
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+          <span>Login</span>
+        `;
+        if (mainAuthActionBtn) {
+          mainAuthActionBtn.innerHTML = loginHtml;
+          mainAuthActionBtn.href = "login.html";
+        }
+        if (drawerAuthActionBtn) {
+          drawerAuthActionBtn.innerHTML = loginHtml;
+          drawerAuthActionBtn.href = "login.html";
+        }
+      }
+      renderCourses();
+    });
+
+    // 2. Real-time Courses Listener (With Deduplication & Cleanup)
+    onSnapshot(collection(db, "courses"), (snapshot) => {
+      allCourses = [];
+      const categoriesSet = new Set(['All']);
+      const seenTitles = new Set();
+
+      snapshot.forEach(docSnap => {
+        const c = docSnap.data();
+        const id = docSnap.id;
+        const rawTitle = (c.title || '').trim();
+
+        // Filter out dummy/diagnostic test records
+        if (/test course via diagnostic/i.test(rawTitle)) return;
+        if (/^test$/i.test(rawTitle)) return;
+
+        const normalized = normalizeTitle(rawTitle);
+
+        // Deduplicate cards by title
+        const key = normalized.toLowerCase();
+        if (seenTitles.has(key)) return;
+        seenTitles.add(key);
+
+        allCourses.push({
+          id,
+          ...c,
+          title: normalized
+        });
+
+        if (c.category) {
+          categoriesSet.add(c.category.trim());
+        }
+      });
+
+      renderCategoryButtons(Array.from(categoriesSet));
+      renderCourses();
+    }, (err) => {
+      console.error("Courses listener failed:", err);
+      container.innerHTML = `<p style="grid-column:1/-1;color:var(--brand-primary);text-align:center;">Unable to load courses. Please verify Firestore Security Rules.</p>`;
+    });
+
+    // 3. Render Category Filter Chips
+    function renderCategoryButtons(categories) {
+      dynamicFilterBox.innerHTML = '';
+      categories.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `category-pill ${cat === selectedCategory ? 'active' : ''}`;
+        btn.textContent = cat;
+        btn.onclick = () => {
+          selectedCategory = cat;
+          document.querySelectorAll('.category-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderCourses();
+        };
+        dynamicFilterBox.appendChild(btn);
+      });
+    }
+
+    // 4. Render Sanitized Course Cards
+    function renderCourses() {
+      container.innerHTML = '';
+      const query = searchInput.value.toLowerCase().trim();
+
+      const filtered = allCourses.filter(c => {
+        const titleMatch = (c.title || '').toLowerCase().includes(query);
+        const instructorMatch = (c.instructor || '').toLowerCase().includes(query);
+        const catMatch = (selectedCategory === 'All' || (c.category || '').toLowerCase() === selectedCategory.toLowerCase());
+        return (titleMatch || instructorMatch) && catMatch;
+      });
+
+      if (filtered.length === 0) {
+        emptyNotice.style.display = 'flex';
+        return;
+      } else {
+        emptyNotice.style.display = 'none';
+      }
+
+      filtered.forEach(c => {
+        const thumb = c.thumbnail || FALLBACK_THUMB;
+        const price = parseInt(c.price) || 0;
+
+        const card = document.createElement('article');
+        card.className = 'course-card';
+        card.innerHTML = `
+          <div class="course-thumb-box">
+            <img src="${thumb}" alt="${c.title}" onerror="this.onerror=null;this.src='${FALLBACK_THUMB}'">
+            <span class="badge-pill-pastel badge-category">${c.category || 'Discipline'}</span>
+            <span class="badge-pill-pastel badge-price">${price === 0 ? 'FREE' : '₹' + price}</span>
+          </div>
+          <div class="course-card-body">
+            <div>
+              <h3>${c.title}</h3>
+              <p>Comprehensive curriculum featuring direct video lessons, Drive PDF documents, and practice assessments.</p>
+            </div>
+            <div>
+              <div class="instructor-meta" style="margin-bottom:14px;">
+                <span>👨‍🏫 Instructor:</span>
+                <strong style="color:var(--text-primary);">${c.instructor || 'TECHMITRA Faculty'}</strong>
+              </div>
+              <button type="button" class="btn btn-primary" style="width:100%;font-size:13px;min-height:44px;" data-id="${c.id}" data-title="${c.title}">
+                <span>${isUserLoggedIn ? '▶ Open Classroom' : '🔒 Sign In to Enroll'}</span>
+              </button>
+            </div>
+          </div>
+        `;
+
+        // Direct Classroom or Login Redirect
+        const ctaBtn = card.querySelector('button');
+        ctaBtn.onclick = () => {
+          if (isUserLoggedIn) {
+            window.location.href = `course-player.html?courseId=${c.id}`;
+          } else {
+            window.location.href = `login.html?redirect=course-player.html?courseId=${c.id}`;
+          }
+        };
+
+        container.appendChild(card);
+      });
+    }
+
+    searchInput.addEventListener('input', renderCourses);
+
+    // Dynamic Copyright Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- ==========================================================================
+       TASK 1: MOBILE & TABLET DRAWER CONTROLLER
+       ========================================================================== -->
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const drawerBackdrop = document.getElementById('drawerBackdrop');
+    const btnCloseDrawer = document.getElementById('btnCloseDrawer');
+
+    function openMobileDrawer() {
+      mobileDrawer.classList.add('open');
+      drawerBackdrop.classList.add('active');
+      document.body.classList.add('drawer-open');
+      menuToggle.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeMobileDrawer() {
+      mobileDrawer.classList.remove('open');
+      drawerBackdrop.classList.remove('active');
+      document.body.classList.remove('drawer-open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    menuToggle.addEventListener('click', openMobileDrawer);
+    btnCloseDrawer.addEventListener('click', closeMobileDrawer);
+    drawerBackdrop.addEventListener('click', closeMobileDrawer);
+
+    // Auto-close on link navigation or ESC key
+    document.querySelectorAll('.drawer-menu a').forEach(link => {
+      link.addEventListener('click', closeMobileDrawer);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMobileDrawer();
+    });
+  </script>
+
+  <!-- ==========================================================================
+       TASK 3: MITRA AI TUTOR ENGINE (MARKDOWN PARSER & PEDAGOGICAL PROMPT)
+       ========================================================================== -->
+  <script>
+    const mitraChatWindow = document.getElementById('mitraChatWindow');
+    const btnToggleMitra = document.getElementById('btnToggleMitra');
+    const btnCloseMitra = document.getElementById('btnCloseMitra');
+    const mitraForm = document.getElementById('mitraForm');
+    const mitraInput = document.getElementById('mitraInput');
+    const mitraStream = document.getElementById('mitraStream');
+
+    function toggleMitra() {
+      const isHidden = mitraChatWindow.style.display === 'none' || mitraChatWindow.style.display === '';
+      mitraChatWindow.style.display = isHidden ? 'flex' : 'none';
+      if (isHidden) mitraInput.focus();
+    }
+
+    window.openMitraBot = function() {
+      mitraChatWindow.style.display = 'flex';
+      mitraInput.focus();
+    };
+
+    btnToggleMitra.addEventListener('click', toggleMitra);
+    btnCloseMitra.addEventListener('click', () => { mitraChatWindow.style.display = 'none'; });
+
+    // Client-side Markdown Formatter for Code, Bold, & Lists
+    function formatMarkdown(text) {
+      if (!text) return "";
+      let html = text
+        // Escape HTML
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        // Code Blocks ```lang ... ```
+        .replace(/```([a-zA-Z]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+          return `<pre><code>${code.trim()}</code></pre>`;
+        })
+        // Inline code `...`
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Bold **...**
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        // Unordered Lists
+        .replace(/^\s*[-*]\s+(.*)$/gm, '<li>$1</li>');
+
+      // Wrap lists
+      html = html.replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>');
+      // Line breaks
+      html = html.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+      return html;
+    }
+
+    function appendMessage(sender, rawContent, isHtml = false) {
+      const bubble = document.createElement('div');
+      bubble.className = `mitra-bubble ${sender}`;
+      bubble.innerHTML = isHtml ? rawContent : formatMarkdown(rawContent);
+      mitraStream.appendChild(bubble);
+      mitraStream.scrollTop = mitraStream.scrollHeight;
+    }
+
+    window.askMitraPrompt = function(promptText) {
+      mitraInput.value = promptText;
+      mitraForm.dispatchEvent(new Event('submit'));
+    };
+
+    // System Persona & Pedagogical Response Generator
+    function generateMitraAnswer(question) {
+      const q = question.toLowerCase();
+
+      if (q.includes('linux') && (q.includes('permission') || q.includes('chmod') || q.includes('octal'))) {
+        return `In Linux, file permissions maintain security across three tiers: **User (u)**, **Group (g)**, and **Others (o)**.
+
+Each tier has three basic rights represented numerically in **octal notation**:
+* **Read (r)** = 4
+* **Write (w)** = 2
+* **Execute (x)** = 1
+
+\`\`\`bash
+# Example: Read & Write for User (4+2=6), Read-only for Group & Others (4)
+chmod 644 document.txt
+
+# Full control for User (7), Read & Execute for Group & Others (5)
+chmod 755 server.sh
+\`\`\`
+
+**Memory Tip:** Simply add the values together: \`4 + 2 + 1 = 7\` (Full Access)!`;
+      }
+
+      if (q.includes('tcp') && q.includes('udp')) {
+        return `Think of **TCP** and **UDP** like two different delivery mechanisms:
+
+1. **TCP (Transmission Control Protocol):**
+* **Analogy:** Registered postal mail. A three-way handshake (\`SYN\` -> \`SYN-ACK\` -> \`ACK\`) ensures every packet arrives safely. If a packet is dropped, it gets re-sent.
+* **Use Case:** Web browsing (HTTP/HTTPS), email (SMTP), file transfers (FTP).
+
+2. **UDP (User Datagram Protocol):**
+* **Analogy:** Live television broadcast. Packets stream without waiting for receipts. Faster, but packet loss can occur.
+* **Use Case:** Live video streaming, online gaming, VoIP calls.`;
+      }
+
+      if (q.includes('cloud') && (q.includes('learn') || q.includes('roadmap') || q.includes('first'))) {
+        return `Here is a battle-tested roadmap for learning Cloud Computing:
+
+1. **Foundations First:**
+* **Linux Essentials:** Terminal navigation, SSH keys, basic bash scripting.
+* **Networking:** IP addresses, Subnets, DNS, CIDR blocks, TCP/IP fundamentals.
+
+2. **Core Cloud Provider:**
+* Pick **AWS** or **Azure**. Focus on:
+  * Compute: EC2, Lambda (Serverless)
+  * Networking: VPC, Security Groups
+  * Storage: S3, EBS buckets
+  * Identity: IAM roles and policies
+
+3. **Containers & Automation:**
+* Learn **Docker** for containerization and **Terraform** for Infrastructure as Code (IaC).
+
+Start with our **Linux Fundamentals** course right on TECHMITRA!`;
+      }
+
+      if (q.includes('pointer') || q.includes('c++')) {
+        return `A **pointer** in C++ is simply a variable that stores the memory address of another variable.
+
+\`\`\`cpp
+#include <iostream>
+
+int main() {
+    int score = 100;
+    int* ptr = &score; // 'ptr' stores the memory address of 'score'
+
+    std::cout << "Value: " << score << std::endl;      // Prints 100
+    std::cout << "Address: " << ptr << std::endl;      // Prints 0x7ffd...
+    std::cout << "Dereference: " << *ptr << std::endl; // Prints 100
+    return 0;
+}
+\`\`\`
+
+**Complexity & Performance:**
+* **Time Complexity:** Dereferencing is \`O(1)\` constant time.
+* **Tip:** Always initialize pointers or assign them to \`nullptr\` to prevent undefined behavior from dangling pointers!`;
+      }
+
+      if (q.includes('course') || q.includes('enroll') || q.includes('access')) {
+        return `To enroll in any course on **TECHMITRA**:
+1. Click **'Login'** at the top right to sign in or create an account.
+2. Select your desired course from the catalog above.
+3. Access step-by-step video classrooms, verified Drive notes, and chapter test modules directly from your personal dashboard!`;
+      }
+
+      // Default Encouraging Pedagogical Response
+      return `That is a fundamental engineering inquiry! 💡
+
+In technical problem-solving, breaking the concept into input, processing, and output simplifies the mental model:
+* **Core Principle:** Build a solid understanding of memory, data structures, and network layers.
+* **Practical Exercise:** Experiment with the command line or compile minimal reproducible code snippets.
+
+Explore our **Courses** catalog above for comprehensive curricula, or ask me for a code sample on this topic!`;
+    }
+
+    mitraForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userText = mitraInput.value.trim();
+      if (!userText) return;
+
+      appendMessage('user', userText);
+      mitraInput.value = '';
+
+      // Render Typing Indicator
+      const typing = document.createElement('div');
+      typing.className = 'mitra-bubble bot';
+      typing.innerHTML = `
+        <div class="typing-dots" aria-label="MITRA is thinking">
+          <span></span><span></span><span></span>
+        </div>
+      `;
+      mitraStream.appendChild(typing);
+      mitraStream.scrollTop = mitraStream.scrollHeight;
+
+      setTimeout(() => {
+        typing.remove();
+        try {
+          const response = generateMitraAnswer(userText);
+          appendMessage('bot', response);
+        } catch (err) {
+          appendMessage('bot', "I encountered a processing error. Please try asking again or rephrase your question.");
+        }
+      }, 600);
+    });
+  </script>
+</body>
+</html>

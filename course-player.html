@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>TECHMITRA — Course Classroom Player</title>
+
+  <!-- Google Fonts: Manrope & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary-red: #ea1d24;
+      --primary-red-hover: #d11219;
+      --primary-gradient: linear-gradient(135deg, #f0252b 0%, #d80b12 100%);
+      --primary-red-glow: rgba(234, 29, 36, 0.28);
+      --red-subtle-bg: #fef2f2;
+      --red-border-subtle: #fee2e2;
+
+      --bg-body: #edf0f5;
+      --bg-card: #ffffff;
+      --bg-surface: #ffffff;
+      --input-bg: #f8fafc;
+      --input-border: #e2e8f0;
+
+      --text-main: #111827;
+      --text-sub: #374151;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+
+      --border-light: #e5e7eb;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.03);
+      --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(0, 0, 0, 0.02);
+
+      --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --header-height: 64px;
+      --sidebar-width: 340px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+      --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient red glows */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -120px;
+      right: -100px;
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(234, 29, 36, 0.16) 0%, rgba(234, 29, 36, 0.03) 55%, transparent 75%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ================= HEADER NAVBAR ================= */
+    .classroom-header {
+      height: var(--header-height);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      gap: 12px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      color: var(--text-sub);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .btn-back:hover {
+      border-color: var(--primary-red);
+      color: var(--primary-red);
+      background: #fff5f5;
+    }
+
+    .header-brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .header-brand-wrap img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .course-title-top {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .course-title-top span { color: var(--primary-red); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .btn-syllabus-toggle {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: var(--radius-pill);
+      background: var(--red-subtle-bg);
+      border: 1.5px solid var(--red-border-subtle);
+      color: var(--primary-red);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .btn-syllabus-toggle:hover {
+      background: var(--primary-red);
+      color: #ffffff;
+    }
+
+    /* ================= CLASSROOM LAYOUT ================= */
+    .classroom-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr var(--sidebar-width);
+      gap: 24px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 28px 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .player-container {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .video-card-box {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .selector-bar-wrap {
+      padding: 10px 18px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-light);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .selector-bar-wrap::-webkit-scrollbar { display: none; }
+    .selector-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .subitem-pills-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+    }
+    .subitem-pills-row::-webkit-scrollbar { display: none; }
+
+    .subitem-pill {
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1px solid var(--border-light);
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .subitem-pill.active {
+      background: var(--primary-red);
+      color: #ffffff;
+      border-color: var(--primary-red);
+    }
+
+    /* Video Viewport */
+    .video-viewport {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .video-viewport iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: #000000;
+      pointer-events: auto !important;
+    }
+
+    /* Fullscreen Auto-Rotate Engine */
+    .video-viewport.is-youtube-fullscreen {
+      position: fixed !important;
+      z-index: 99999999 !important;
+      background: #000000 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .video-viewport.is-youtube-fullscreen.force-landscape {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vh !important;
+      height: 100vw !important;
+      transform-origin: 0 0 !important;
+      transform: rotate(90deg) translateY(-100%) !important;
+    }
+
+    .video-viewport.is-youtube-fullscreen.native-landscape {
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      transform: none !important;
+    }
+
+    .btn-exit-fullscreen {
+      display: none;
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--primary-red);
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      z-index: 10000000;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8);
+    }
+    .video-viewport.is-youtube-fullscreen .btn-exit-fullscreen {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .video-placeholder-notice {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #cbd5e1;
+      font-size: 13.5px;
+      background: #090e1a;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .lesson-meta-bar {
+      padding: 16px 20px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .lesson-heading-text h2 {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+    .lesson-heading-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-fullscreen-trigger {
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border: none;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px var(--primary-red-glow);
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    /* TABS */
+    .tabs-card-panel {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lesson-tabs-nav {
+      display: flex;
+      gap: 4px;
+      padding: 0 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-light);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .tab-btn {
+      padding: 14px 18px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+    }
+    .tab-btn.active {
+      color: var(--primary-red);
+      font-weight: 800;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary-red);
+    }
+
+    .tab-content-area {
+      padding: 22px;
+      flex: 1;
+    }
+
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* PDF Viewer */
+    .pdf-viewer-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .pdf-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-pdf-fullscreen {
+      padding: 6.5px 16px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      color: var(--primary-red);
+      font-size: 12px;
+      font-weight: 800;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-pdf-fullscreen:hover {
+      background: var(--primary-red);
+      color: #ffffff;
+    }
+
+    .pdf-inline-frame {
+      width: 100%;
+      height: clamp(420px, 65vh, 640px);
+      border: 1.5px solid var(--border-light);
+      border-radius: 14px;
+      background: #f8fafc;
+      display: block;
+    }
+
+    .no-content-card {
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13.5px;
+    }
+
+    /* Quiz Cards */
+    .quiz-card-box {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-light);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .quiz-q-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .opts-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      color: var(--text-sub);
+      font-size: 13.5px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+    .option-btn:hover { border-color: #cbd5e1; }
+    .option-btn.correct {
+      background: #ecfdf5;
+      border-color: #10b981;
+      color: #059669;
+      font-weight: 800;
+    }
+    .option-btn.wrong {
+      background: #fef2f2;
+      border-color: #ef4444;
+      color: #dc2626;
+    }
+
+    /* RIGHT SYLLABUS SIDEBAR */
+    .syllabus-sidebar {
+      background: #ffffff;
+      border: 1.5px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: fit-content;
+      max-height: calc(100vh - 100px);
+      position: sticky;
+      top: calc(var(--header-height) + 16px);
+    }
+
+    .syllabus-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+    .syllabus-header h3 {
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .syllabus-header h3::before {
+      content: '';
+      width: 4px;
+      height: 14px;
+      background: var(--primary-red);
+      border-radius: 2px;
+    }
+
+    .lessons-list {
+      display: flex;
+      flex-direction: column;
+      list-style: none;
+      overflow-y: auto;
+      max-height: 520px;
+    }
+
+    .lesson-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .lesson-item:hover { background: #fafafa; }
+    .lesson-item.active {
+      background: #fef2f2;
+      border-left: 4px solid var(--primary-red);
+    }
+
+    .lesson-num-badge {
+      font-size: 12px;
+      font-weight: 800;
+      background: #f1f5f9;
+      color: var(--text-sub);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .lesson-item.active .lesson-num-badge {
+      background: var(--primary-red);
+      color: #ffffff;
+      box-shadow: 0 2px 8px var(--primary-red-glow);
+    }
+
+    .lesson-item-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      flex: 1;
+    }
+    .lesson-title-text {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .lesson-item.active .lesson-title-text {
+      color: var(--primary-red);
+    }
+    .lesson-meta-icons {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .drawer-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 150;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+      .classroom-layout {
+        grid-template-columns: 1fr;
+        padding: 0 0 40px 0;
+        gap: 16px;
+      }
+      .video-card-box { border-radius: 0; border: none; }
+      .tabs-card-panel { margin: 0 14px; border-radius: 16px; }
+
+      .syllabus-sidebar {
+        position: fixed;
+        right: -340px;
+        top: 0;
+        bottom: 0;
+        width: 320px;
+        max-height: 100vh;
+        border-radius: 0;
+        z-index: 200;
+        transition: right 0.28s ease;
+      }
+      .syllabus-sidebar.open { right: 0; }
+      .drawer-overlay.active { display: block; }
+      .btn-syllabus-toggle { display: inline-flex; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="drawer-overlay" id="drawerOverlay"></div>
+
+  <!-- NAVBAR -->
+  <header class="classroom-header">
+    <div class="header-left">
+      <a href="dashboard.html" class="btn-back"><span>&larr;</span> <span>Dashboard</span></a>
+      <div class="header-brand-wrap">
+        <h1 class="course-title-top" id="courseTopTitle">TECHMITRA <span>Classroom</span></h1>
+      </div>
+    </div>
+    <div class="header-right">
+      <button type="button" class="btn-syllabus-toggle" id="btnToggleSyllabusDrawer">
+        <span>📚 Syllabus</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CLASSROOM MAIN -->
+  <main class="classroom-layout">
+    <div class="player-container">
+      
+      <!-- VIDEO CONTAINER -->
+      <div class="video-card-box">
+        <div class="selector-bar-wrap" id="videoSelectorRow">
+          <span class="selector-label">Choose Video:</span>
+          <div class="subitem-pills-row" id="videoPills"></div>
+        </div>
+
+        <div class="video-viewport" id="videoViewport">
+          <iframe 
+            id="videoIframe" 
+            src="" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" 
+            allowfullscreen="true"
+          ></iframe>
+
+          <button type="button" class="btn-exit-fullscreen" id="btnExitFullscreen">
+            <span>✕ Exit Fullscreen</span>
+          </button>
+
+          <div class="video-placeholder-notice" id="videoNotice">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+            <p id="videoNoticeText">No video attached to this lesson.</p>
+          </div>
+        </div>
+
+        <div class="lesson-meta-bar">
+          <div class="lesson-heading-text">
+            <h2 id="currentLessonTitle">Loading lesson...</h2>
+            <p>Direct Inline Video &bull; Embedded Drive Notes &bull; Interactive Quiz</p>
+          </div>
+          <div>
+            <button type="button" class="btn-fullscreen-trigger" id="btnFullscreenVideo">
+              <span>Fullscreen ⛶</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TABS: PDF & MCQS -->
+      <div class="tabs-card-panel">
+        <div class="lesson-tabs-nav">
+          <button class="tab-btn active" data-tab="notes">📄 Drive PDF Notes</button>
+          <button class="tab-btn" data-tab="quiz">📝 Lesson Quiz (MCQs)</button>
+          <button class="tab-btn" id="mobileTabSyllabusTrigger" data-tab="mobile-syllabus" style="display:none;">📑 Lessons List</button>
+        </div>
+
+        <div class="tab-content-area">
+          <!-- TAB 1: PDF -->
+          <div class="tab-view active" id="tab-notes">
+            <div class="pdf-viewer-wrap" id="pdfViewerWrapper">
+              <div class="pdf-toolbar">
+                <a href="#" target="_blank" class="btn-pdf-fullscreen" id="btnPdfExternalFallback">
+                  <span>Open Fullscreen</span> ↗
+                </a>
+              </div>
+              <iframe id="pdfIframe" class="pdf-inline-frame" src="" allowfullscreen="true"></iframe>
+            </div>
+
+            <div class="no-content-card" id="noPdfNotice" style="display:none;">
+              <p>No PDF notes attached to this lesson.</p>
+            </div>
+          </div>
+
+          <!-- TAB 2: MCQS -->
+          <div class="tab-view" id="tab-quiz">
+            <div id="quizContainer">
+              <div class="no-content-card">
+                <p>No quiz questions attached to this lesson.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: MOBILE SYLLABUS -->
+          <div class="tab-view" id="tab-mobile-syllabus">
+            <ul id="mobileInlineLessonsList" class="lessons-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SYLLABUS -->
+    <aside class="syllabus-sidebar" id="syllabusSidebar">
+      <div class="syllabus-header">
+        <h3>Course Syllabus</h3>
+        <button type="button" class="btn-back" id="btnCloseSyllabusDrawer" style="display:none; padding:4px 10px; font-size:11px;">
+          Close ✕
+        </button>
+      </div>
+      <ul id="lessonsList" class="lessons-list"></ul>
+    </aside>
+  </main>
+
+  <!-- FIREBASE DATA ENGINE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      doc, 
+      getDoc, 
+      collection, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAaELTyJ7Z_Ku53tBldsMYOGscPSe-OrHg",
+      authDomain: "techmitra-web.firebaseapp.com",
+      projectId: "techmitra-web",
+      storageBucket: "techmitra-web.firebasestorage.app",
+      messagingSenderId: "214838320813",
+      appId: "1:214838320813:web:efef413add99454416f024",
+      measurementId: "G-TDDT23B9XN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const courseId = urlParams.get('courseId');
+
+    let lessons = [];
+    let currentLessonIndex = 0;
+
+    // Google Drive URL to Embed Preview
+    function formatDriveEmbed(url) {
+      if (!url) return "";
+      const trimmed = url.trim();
+
+      const driveMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || 
+                         trimmed.match(/id=([a-zA-Z0-9_-]+)/) ||
+                         trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+
+      if (driveMatch && driveMatch[1]) {
+        return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+      }
+
+      if (trimmed.includes("watch?v=")) {
+        const vid = trimmed.split("v=")[1]?.split("&")[0];
+        return `https://www.youtube.com/embed/${vid}?autoplay=0&rel=0&playsinline=1`;
+      }
+      if (trimmed.includes("youtu.be/")) {
+        const vid = trimmed.split("youtu.be/")[1]?.split("?")[0];
+        return `https://www.youtube.com/embed/${vid}?autoplay=0&rel=0&playsinline=1`;
+      }
+
+      return trimmed;
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace("login.html");
+        return;
+      }
+
+      if (!courseId) {
+        alert("Course ID missing! Please select a course from dashboard.");
+        window.location.replace("dashboard.html");
+        return;
+      }
+
+      // Title fetch
+      try {
+        const courseSnap = await getDoc(doc(db, "courses", courseId));
+        if (courseSnap.exists()) {
+          document.getElementById('courseTopTitle').innerHTML = `${courseSnap.data().title} &bull; <span>Classroom</span>`;
+        }
+      } catch(e) {}
+
+      // REAL-TIME LISTENER FOR LESSONS
+      onSnapshot(collection(db, "courses", courseId, "lessons"), (snap) => {
+        lessons = [];
+
+        snap.forEach(d => {
+          const raw = d.data();
+
+          // =======================================================
+          // DATA ADAPTER: Admin panel ke single fields ko
+          // arrays me convert karta hai (Jisse 0 Videos fix ho gaya)
+          // =======================================================
+          let videoList = [];
+          if (raw.videos && Array.isArray(raw.videos) && raw.videos.length > 0) {
+            videoList = raw.videos;
+          } else if (raw.videoUrl && raw.videoUrl.trim() !== "") {
+            videoList = [{ title: "Main Lesson Video", driveUrl: raw.videoUrl.trim() }];
+          }
+
+          let pdfList = [];
+          if (raw.pdfs && Array.isArray(raw.pdfs) && raw.pdfs.length > 0) {
+            pdfList = raw.pdfs;
+          } else if (raw.notesUrl && raw.notesUrl.trim() !== "") {
+            pdfList = [{ title: "Drive Notes PDF", driveUrl: raw.notesUrl.trim() }];
+          }
+
+          let mcqList = [];
+          if (raw.mcqs && Array.isArray(raw.mcqs) && raw.mcqs.length > 0) {
+            mcqList = raw.mcqs;
+          } else if (raw.quiz && raw.quiz.question) {
+            mcqList = [raw.quiz];
+          }
+
+          lessons.push({
+            id: d.id,
+            title: raw.title || "Lesson",
+            order: Number(raw.order) || 1,
+            videos: videoList,
+            pdfs: pdfList,
+            mcqs: mcqList
+          });
+        });
+
+        lessons.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        renderAllSyllabusLists();
+
+        if (lessons.length > 0) {
+          loadLesson(currentLessonIndex);
+        } else {
+          document.getElementById('currentLessonTitle').textContent = "No lessons added yet.";
+          document.getElementById('videoNotice').style.display = 'flex';
+        }
+      });
+    });
+
+    // Render Syllabus List
+    function renderAllSyllabusLists() {
+      const desktopList = document.getElementById('lessonsList');
+      const mobileList = document.getElementById('mobileInlineLessonsList');
+      
+      desktopList.innerHTML = '';
+      if (mobileList) mobileList.innerHTML = '';
+
+      lessons.forEach((l, idx) => {
+        const createItem = () => {
+          const li = document.createElement('li');
+          li.className = `lesson-item ${idx === currentLessonIndex ? 'active' : ''}`;
+          li.innerHTML = `
+            <div class="lesson-num-badge">${idx + 1}</div>
+            <div class="lesson-item-info">
+              <div class="lesson-title-text">${l.title}</div>
+              <div class="lesson-meta-icons">
+                ${l.videos.length} Video(s) &bull; ${l.pdfs.length} PDF(s) ${l.mcqs.length > 0 ? '&bull; 📝 MCQ' : ''}
+              </div>
+            </div>
+          `;
+          li.onclick = () => {
+            currentLessonIndex = idx;
+            loadLesson(idx);
+            renderAllSyllabusLists();
+            closeMobileDrawer();
+
+            if (window.innerWidth <= 992) {
+              const notesTab = document.querySelector('.tab-btn[data-tab="notes"]');
+              if (notesTab) notesTab.click();
+            }
+          };
+          return li;
+        };
+
+        desktopList.appendChild(createItem());
+        if (mobileList) mobileList.appendChild(createItem());
+      });
+    }
+
+    // Load Single Lesson Content
+    function loadLesson(idx) {
+      if (!lessons[idx]) return;
+      const lesson = lessons[idx];
+
+      document.getElementById('currentLessonTitle').textContent = `${lesson.order || idx + 1}. ${lesson.title}`;
+
+      // 1. VIDEO LOADING
+      const videoIframe = document.getElementById('videoIframe');
+      const videoNotice = document.getElementById('videoNotice');
+
+      if (lesson.videos && lesson.videos.length > 0) {
+        videoNotice.style.display = 'none';
+        videoIframe.style.display = 'block';
+        videoIframe.src = formatDriveEmbed(lesson.videos[0].driveUrl);
+      } else {
+        videoIframe.style.display = 'none';
+        videoNotice.style.display = 'flex';
+        document.getElementById('videoNoticeText').textContent = "Is lesson me video link nahi hai.";
+      }
+
+      // 2. PDF LOADING
+      const pdfFrame = document.getElementById('pdfIframe');
+      const pdfViewerWrap = document.getElementById('pdfViewerWrapper');
+      const noPdfNotice = document.getElementById('noPdfNotice');
+      const btnPdfFullscreen = document.getElementById('btnPdfExternalFallback');
+
+      if (lesson.pdfs && lesson.pdfs.length > 0) {
+        pdfViewerWrap.style.display = 'flex';
+        noPdfNotice.style.display = 'none';
+        pdfFrame.src = formatDriveEmbed(lesson.pdfs[0].driveUrl);
+        btnPdfFullscreen.href = lesson.pdfs[0].driveUrl;
+      } else {
+        pdfViewerWrap.style.display = 'none';
+        noPdfNotice.style.display = 'block';
+      }
+
+      // 3. MCQS LOADING
+      const quizContainer = document.getElementById('quizContainer');
+      quizContainer.innerHTML = '';
+
+      if (lesson.mcqs && lesson.mcqs.length > 0) {
+        lesson.mcqs.forEach((m, mIdx) => {
+          const qBox = document.createElement('div');
+          qBox.className = 'quiz-card-box';
+          qBox.innerHTML = `
+            <div class="quiz-q-title">Q${mIdx + 1}. ${m.question}</div>
+            <div class="opts-wrap">
+              ${(m.options || []).map((opt, oIdx) => `
+                <button class="option-btn" data-oidx="${oIdx}">
+                  <span>${String.fromCharCode(65 + oIdx)}.</span> 
+                  <span>${opt}</span>
+                </button>
+              `).join('')}
+            </div>
+            <p class="quiz-feedback-box" style="margin-top:10px; font-weight:800; font-size:13px; display:none;"></p>
+          `;
+
+          const opts = qBox.querySelectorAll('.option-btn');
+          const feedback = qBox.querySelector('.quiz-feedback-box');
+
+          opts.forEach(btn => {
+            btn.onclick = () => {
+              const selected = parseInt(btn.dataset.oidx);
+              const correct = parseInt(m.correct);
+              opts.forEach(b => b.disabled = true);
+
+              feedback.style.display = 'block';
+              if (selected === correct) {
+                btn.classList.add('correct');
+                feedback.style.color = '#059669';
+                feedback.textContent = "✓ Sahi Jawab! Well Done!";
+              } else {
+                btn.classList.add('wrong');
+                if (opts[correct]) opts[correct].classList.add('correct');
+                feedback.style.color = '#dc2626';
+                feedback.textContent = "✗ Galat Jawab! Green option sahi hai.";
+              }
+            };
+          });
+
+          quizContainer.appendChild(qBox);
+        });
+      } else {
+        quizContainer.innerHTML = `<div class="no-content-card"><p>No quiz questions attached to this lesson.</p></div>`;
+      }
+    }
+
+    // YOUTUBE FULLSCREEN ENGINE
+    const videoViewport = document.getElementById('videoViewport');
+    const btnFullscreenVideo = document.getElementById('btnFullscreenVideo');
+    const btnExitFullscreen = document.getElementById('btnExitFullscreen');
+
+    function updateFullscreenOrientation() {
+      if (!videoViewport.classList.contains('is-youtube-fullscreen')) return;
+      const isPortrait = window.innerHeight > window.innerWidth;
+
+      if (isPortrait) {
+        videoViewport.classList.add('force-landscape');
+        videoViewport.classList.remove('native-landscape');
+      } else {
+        videoViewport.classList.remove('force-landscape');
+        videoViewport.classList.add('native-landscape');
+      }
+    }
+
+    btnFullscreenVideo.onclick = () => {
+      videoViewport.classList.add('is-youtube-fullscreen');
+      updateFullscreenOrientation();
+    };
+
+    btnExitFullscreen.onclick = () => {
+      videoViewport.classList.remove('is-youtube-fullscreen', 'force-landscape', 'native-landscape');
+    };
+
+    window.addEventListener('resize', updateFullscreenOrientation);
+
+    // MOBILE DRAWER
+    const syllabusSidebar = document.getElementById('syllabusSidebar');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+    function closeMobileDrawer() {
+      syllabusSidebar.classList.remove('open');
+      drawerOverlay.classList.remove('active');
+    }
+    window.closeMobileDrawer = closeMobileDrawer;
+
+    document.getElementById('btnToggleSyllabusDrawer').onclick = () => {
+      syllabusSidebar.classList.add('open');
+      drawerOverlay.classList.add('active');
+    };
+    document.getElementById('btnCloseSyllabusDrawer').onclick = closeMobileDrawer;
+    drawerOverlay.onclick = closeMobileDrawer;
+
+    // TABS
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+        btn.classList.add('active');
+        const view = document.getElementById(`tab-${btn.dataset.tab}`);
+        if (view) view.classList.add('active');
+      };
+    });
+
+    if (window.innerWidth <= 992) {
+      const mobTrigger = document.getElementById('mobileTabSyllabusTrigger');
+      if (mobTrigger) mobTrigger.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

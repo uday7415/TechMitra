@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Firebase Firestore Diagnostic Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 30px; background: #f4f4f5; color: #111; }
+    .card { background: white; padding: 25px; border-radius: 12px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    button { padding: 12px 20px; font-size: 14px; font-weight: bold; background: #e50916; color: white; border: none; border-radius: 8px; cursor: pointer; margin-right: 10px; }
+    #log { margin-top: 20px; padding: 15px; background: #111827; color: #10b981; border-radius: 8px; font-family: monospace; white-space: pre-wrap; font-size: 13px; min-height: 120px; }
+    .warn { color: #f59e0b !important; }
+    .err { color: #ef4444 !important; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>TECHMITRA — Database Connection Tester</h2>
+    <p>Niche diye gaye button par click karein aur dekhein kya result aata hai:</p>
+    
+    <button id="btnTest">Run Connection Test</button>
+    <button id="btnClear" style="background:#6b7280;">Clear Log</button>
+
+    <div id="log">Testing ke liye "Run Connection Test" dabayein...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAaELTyJ7Z_Ku53tBldsMYOGscPSe-OrHg",
+      authDomain: "techmitra-web.firebaseapp.com",
+      projectId: "techmitra-web",
+      storageBucket: "techmitra-web.firebasestorage.app",
+      messagingSenderId: "214838320813",
+      appId: "1:214838320813:web:efef413add99454416f024",
+      measurementId: "G-TDDT23B9XN"
+    };
+
+    const logEl = document.getElementById('log');
+    function log(msg, type = '') {
+      const p = document.createElement('div');
+      if (type) p.className = type;
+      p.textContent = msg;
+      logEl.appendChild(p);
+    }
+
+    document.getElementById('btnClear').onclick = () => { logEl.innerHTML = ''; };
+
+    document.getElementById('btnTest').onclick = async () => {
+      logEl.innerHTML = '';
+      log('1. Checking Browser URL protocol...');
+
+      // Check protocol
+      if (window.location.protocol === 'file:') {
+        log('❌ ERROR: Aapne file ko double-click karke khola hai (file:///)!', 'err');
+        log('⚠️ Firebase Database file:/// protocol par kaam nahi karta.', 'warn');
+        log('👉 Solution: VS Code me right-click karke "Open with Live Server" karein (http://localhost:5500/test.html).', 'warn');
+        return;
+      }
+      log('✓ Protocol is HTTP/HTTPS (Good).');
+
+      log('2. Initializing Firebase & Firestore...');
+      try {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        log('✓ Firebase SDK initialized.');
+
+        log('3. Trying to write a Test Document to "courses" collection...');
+        const docRef = await addDoc(collection(db, "courses"), {
+          title: "Test Course via Diagnostic",
+          category: "Technology",
+          instructor: "TECHMITRA Bot",
+          lessons: 10,
+          createdAt: new Date().toISOString()
+        });
+        log('✅ SUCCESS! Document written with ID: ' + docRef.id);
+
+        log('4. Trying to read back courses from Firestore...');
+        const snapshot = await getDocs(collection(db, "courses"));
+        log(`✅ SUCCESS! Found ${snapshot.size} total course(s) in database.`);
+        log('\n🎉 AAPKA DATABASE 100% WORKING HAI! Problem dashboard files ke setup me thi.');
+
+      } catch (error) {
+        log('\n❌ DATABASE FAILED WITH ERROR:', 'err');
+        log('Error Code: ' + (error.code || 'UNKNOWN'), 'err');
+        log('Error Message: ' + error.message, 'err');
+
+        if (error.code === 'permission-denied') {
+          log('\n👉 Reason: Firebase Rules block kar rahi hain. Firebase Console me Rules check karein.', 'warn');
+        } else if (error.code === 'unavailable' || error.message.includes('offline')) {
+          log('\n👉 Reason: Internet connection ya backend unreachable hai.', 'warn');
+        } else if (error.message.includes('database (default) does not exist')) {
+          log('\n👉 Reason: Firebase Console me Cloud Firestore create nahi hua hai!', 'warn');
+        }
+      }
+    };
+  </script>
+</body>
+</html>

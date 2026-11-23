@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Contact Us | TECHMITRA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--red:#e50916;--black:#171719;--text:#202024;--muted:#6e6e74;--line:#e7e7e9;--surface:#f4f4f5;--soft:#f4f4f5;--shadow-light:#ffffff;--shadow-dark:#d8d8dc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Manrope,Arial,sans-serif;color:var(--text);background:#f4f4f5;line-height:1.6;overflow-x:hidden;position:relative}body:before{content:"";position:fixed;inset:5px;border:1px solid rgba(229,9,22,.42);border-radius:12px;box-shadow:inset 0 0 10px rgba(229,9,22,.045),0 0 12px rgba(229,9,22,.08);pointer-events:none;z-index:9999}
+a{color:inherit;text-decoration:none}input,textarea,button{font:inherit}
+.container{width:min(1180px,calc(100% - 48px));margin-inline:auto}
+.nav-wrap{position:sticky;top:0;z-index:50;background:#f4f4f5;padding:10px 0 0}
+.navbar{height:78px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:clamp(16px,2.2vw,30px);border:1px solid #eeeeef;border-radius:20px;padding:0 20px;background:#f4f4f5;box-shadow:7px 7px 16px #d8d8dc,-7px -7px 16px #ffffff}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Manrope',sans-serif;font-weight:900;font-size:22px;letter-spacing:1.05px;text-transform:uppercase;white-space:nowrap;min-width:max-content;text-shadow:0 1px 0 rgba(0,0,0,.05),0 0 12px rgba(229,9,22,.12)}
+.brand img{display:block;width:44px;height:44px;object-fit:contain;border-radius:50%;flex-shrink:0;background:#fff}
+.brand span{color:#171719;text-shadow:0 0 12px rgba(20,20,20,.12)}.brand b{color:#e50916;text-shadow:0 0 7px rgba(229,9,22,.35),0 0 18px rgba(229,9,22,.16)}
+.links{display:flex;align-items:center;justify-content:center;gap:clamp(12px,1.7vw,24px);min-width:0}
+.links a{font-family:'Manrope',sans-serif;font-size:12px;font-weight:800;letter-spacing:.85px;text-transform:uppercase;color:#303036;transition:color .2s,text-shadow .2s;white-space:nowrap;position:relative;padding:10px 0;text-shadow:0 1px 0 rgba(0,0,0,.035)}
+.links a:after{content:"";position:absolute;left:0;right:100%;bottom:3px;height:2px;border-radius:2px;background:#e50916;transition:right .2s}
+.links a:hover,.links a:focus-visible{color:#e50916;text-shadow:0 0 8px rgba(229,9,22,.35),0 0 18px rgba(229,9,22,.12)}.links a:hover:after,.links a:focus-visible:after{right:0;box-shadow:0 0 8px rgba(229,9,22,.65)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:1px solid transparent;border-radius:30px;font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:.2s}
+.btn-red{background:linear-gradient(110deg,#ef1722,#bf000b);color:#fff;box-shadow:0 7px 18px rgba(229,9,22,.18)}.btn-red:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(229,9,22,.24)}
+.btn-light{background:#f4f4f5;border:1px solid #e7e7e9;color:#222;box-shadow:4px 4px 9px #d8d8dc,-4px -4px 9px #ffffff}
+.menu{display:none;border:1px solid #e7e7e9;background:#f4f4f5;border-radius:12px;padding:9px 12px;font-size:20px;color:#171719;box-shadow:4px 4px 9px #d8d8dc,-4px -4px 9px #ffffff}
+.hero{padding:64px 0 38px;text-align:center;background:radial-gradient(ellipse at 12% 82%,#ffe1e3 0,transparent 38%),radial-gradient(ellipse at 85% 25%,#f9e7e8 0,transparent 44%),#f4f4f5;border-bottom:1px solid #eeeeef}
+.kicker{font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:13px}
+h1,h2,h3{line-height:1.18}
+h1{font-size:clamp(35px,5vw,55px);font-weight:800;letter-spacing:-2px;margin-bottom:14px;color:#151517}
+h1 span{color:var(--red);text-shadow:0 0 18px #e5091615}
+.hero p{max-width:620px;margin:auto;color:var(--muted);font-size:14px}
+.contact-area{padding:55px 0 75px}
+.contact-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:24px;align-items:stretch}
+.info-panel{background:linear-gradient(150deg,#171719,#29292e);color:#fff;border-radius:22px;padding:30px;position:relative;overflow:hidden;box-shadow:8px 8px 20px #d8d8dc,-8px -8px 20px #ffffff}
+.info-panel:after{content:"";position:absolute;width:230px;height:230px;border-radius:50%;border:1px solid #ffffff13;right:-100px;bottom:-100px;box-shadow:0 0 0 25px #ffffff06,0 0 0 50px #ffffff04}
+.info-panel h2{font-size:25px;letter-spacing:-.7px;margin-bottom:12px;position:relative;z-index:1}
+.info-panel>p{color:#c7c7ce;font-size:13px;line-height:1.8;margin-bottom:28px;position:relative;z-index:1}
+.info-item{display:flex;gap:13px;align-items:flex-start;margin:21px 0;position:relative;z-index:1}
+.info-icon{width:42px;height:42px;flex-shrink:0;display:grid;place-items:center;background:linear-gradient(145deg,#2b2b30,#18181b);border:1px solid #e5091670;border-radius:13px;color:#ff424c;font-size:18px;box-shadow:inset 2px 2px 5px #ffffff0a,inset -2px -2px 5px #00000055,0 4px 12px #e5091612}.info-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.info-item strong{display:block;font-size:12px;margin:1px 0 4px}
+.info-item span,.info-item a{font-size:11px;color:#c7c7ce;overflow-wrap:anywhere}
+.info-item a:hover{color:#fff}
+.socials{display:flex;gap:9px;margin-top:28px;position:relative;z-index:1}
+.socials a{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;border:1px solid #ffffff2b;background:#ffffff08;color:#fff;font-size:11px;font-weight:900;letter-spacing:.2px;transition:.2s;box-shadow:inset 1px 1px 3px #ffffff0a}
+.socials a:hover{background:var(--red);border-color:var(--red);box-shadow:0 5px 15px #e509163d}
+.socials a.social-linkedin{background:#0a66c2;border-color:#0a66c2;color:#fff;font-family:Arial,sans-serif;font-size:19px;letter-spacing:-1px}
+.socials a.social-linkedin:hover{background:#084d91;border-color:#084d91}
+.socials a.social-whatsapp{background:#25d366;border-color:#25d366;color:#fff}
+.socials a.social-whatsapp:hover{background:#1eae55;border-color:#1eae55}
+.socials a svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.socials a.social-whatsapp svg path:last-child{fill:currentColor;stroke:none}
+.form-panel{background:#f4f4f5;border:1px solid #f8f8f8;border-radius:22px;padding:30px;box-shadow:8px 8px 20px #d8d8dc,-8px -8px 20px #ffffff}
+.form-panel h2{font-size:24px;letter-spacing:-.6px;margin-bottom:8px}
+.form-panel>p{font-size:12px;color:var(--muted);margin-bottom:23px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:15px}
+.field.full{grid-column:1/-1}
+label{font-size:11px;font-weight:800;color:#35353b}
+input,textarea,select{width:100%;border:1px solid #f8f8f8;border-radius:11px;padding:12px 13px;background:#f4f4f5;color:#202024;outline:none;font-size:12px;transition:.2s;box-shadow:inset 4px 4px 8px #dedee1,inset -4px -4px 8px #ffffff}
+input:focus,textarea:focus,select:focus{border-color:#ef6870;box-shadow:0 0 0 3px #e5091612;background:#fdfdfe}
+textarea{min-height:135px;resize:vertical}
+.form-note{font-size:10px;color:#85858d;line-height:1.7;margin-top:13px}
+.status{display:none;padding:11px 12px;margin-top:13px;border-radius:10px;background:#fff1f1;color:#9f1019;font-size:11px}
+.status.show{display:block}
+.faq{padding:0 0 70px}
+.faq h2{text-align:center;font-size:27px;letter-spacing:-.8px;margin-bottom:25px}
+.faq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.faq-card{background:#f4f4f5;border:1px solid #f8f8f8;border-radius:15px;padding:20px;box-shadow:6px 6px 13px #dedee1,-6px -6px 13px #ffffff}
+.faq-card h3{font-size:13px;margin-bottom:8px}
+.faq-card p{font-size:11px;color:var(--muted);line-height:1.8}
+footer{border-top:1px solid #eeeeef;background:#f4f4f5;padding:25px 0}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}
+footer p,footer a{font-size:10px;color:var(--muted)}
+.footer-links{display:flex;gap:15px;flex-wrap:wrap}
+@media(max-width:1000px){.navbar{gap:14px}.links{gap:12px}.links a{font-size:11px}.brand{font-size:17px}.brand img{width:38px;height:38px}.nav-cta{padding:10px 13px;font-size:10px}}
+@media(max-width:800px){.navbar{height:70px;gap:12px;padding:0 12px}.links{gap:12px}.links a{font-size:10px}.brand{font-size:17px}.brand img{width:37px;height:37px}.contact-grid{grid-template-columns:1fr}.info-panel{min-height:0}.faq-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.container{width:calc(100% - 32px)}.navbar{height:70px;display:flex;gap:10px;padding:0 12px;border-radius:15px}.menu{display:block;flex-shrink:0}.links{display:none;position:absolute;top:70px;left:16px;right:16px;padding:10px;background:#f4f4f5;border:1px solid #f8f8f8;border-radius:16px;box-shadow:8px 8px 18px #d8d8dc,-8px -8px 18px #ffffff;flex-direction:column;align-items:stretch;gap:0}.links.open{display:flex}.links a{padding:12px;font-size:13px}.links a:after{display:none}.links a:hover{background:#fff1f1;border-radius:9px}.nav-cta{display:none}.brand{font-size:16px;gap:7px}.brand img{width:33px;height:33px}.hero{padding:47px 0 31px}.contact-area{padding:35px 0 50px}.info-panel,.form-panel{padding:22px;border-radius:18px}.form-grid{grid-template-columns:1fr;gap:0}.field.full{grid-column:auto}.faq-grid{grid-template-columns:1fr}.faq{padding-bottom:45px}.faq h2{font-size:24px}}
+
+/* Responsive navbar fixes: desktop, tablet and mobile */
+.navbar{position:relative;min-width:0}
+.brand{flex-shrink:0}
+@media (max-width: 900px){
+  .navbar{display:flex;justify-content:space-between;gap:12px;padding:0 16px}
+  .menu{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-width:44px;min-height:44px;cursor:pointer}
+  .nav-cta{display:none}
+  .links{display:none;position:absolute;top:calc(100% + 10px);left:0;right:0;z-index:100;padding:10px;background:#f4f4f5;border:1px solid #e7e7e9;border-radius:16px;box-shadow:8px 8px 18px #d8d8dc,-8px -8px 18px #fff;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:2px;min-width:0}
+  .links.open{display:flex}
+  .links a{display:block;padding:13px 14px;font-size:13px;white-space:normal;border-radius:10px}
+  .links a:after{display:none}
+  .links a:hover,.links a:focus-visible{background:#fff0f1}
+}
+@media (max-width: 480px){
+  .container{width:calc(100% - 28px)}
+  .nav-wrap{padding-top:8px}
+  .navbar{height:64px;padding:0 10px;border-radius:14px;gap:8px}
+  .brand{font-size:clamp(14px,4.2vw,17px);letter-spacing:.5px;gap:6px;min-width:0}
+  .brand img{width:32px;height:32px}
+  .menu{min-width:42px;min-height:42px;padding:7px 10px;font-size:19px;border-radius:11px}
+  .links{top:calc(100% + 8px)}
+}
+@media (prefers-reduced-motion: reduce){.links a,.menu,.btn{transition:none}}
+
+</style>
+</head>
+<body>
+<div class="nav-wrap">
+<header class="navbar container">
+<a class="brand" href="./index.html"><img src="./logo.png" alt="TECHMITRA logo" onerror="this.style.display='none'"><span>TECH<b>MITRA</b></span></a>
+<nav class="links" id="navLinks" aria-label="Main navigation">
+<a href="./index.html">Home</a><a href="about.html">About</a><a href="./index.html#courses">Courses</a><a href="./index.html#resources">Resources</a><a href="contact.html">Contact</a>
+</nav>
+<a class="btn btn-red nav-cta" href="#contact-form">Contact Us ↗</a>
+<button class="menu" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+</header>
+</div>
+<main>
+<section class="hero">
+<div class="container"><div class="kicker">WE'RE HERE TO HELP</div><h1>Let's start a <span>conversation.</span></h1><p>Have a question about courses, learning resources or TECHMITRA? Send us a message and we'll get back to you.</p></div>
+</section>
+<section class="contact-area container" id="contact-form">
+<div class="contact-grid">
+<aside class="info-panel">
+<div class="kicker" style="color:#ff6871">GET IN TOUCH</div>
+<h2>We'd love to<br>hear from you.</h2>
+<p>Reach out with your questions, suggestions or feedback. We're building TECHMITRA to make learning easier for everyone.</p>
+<div class="info-item"><div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></div><div><strong>Email us</strong><a href="mailto:uy6573612@gmail.com">uy6573612@gmail.com</a></div></div>
+<div class="info-item"><div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div><div><strong>Location</strong><a href="https://www.google.com/maps/search/?api=1&query=34%20Sneh%20Nagar%2C%20Ayodhya%20Bypass%2C%20Bhopal" target="_blank" rel="noopener noreferrer">34 Sneh Nagar, Ayodhya Bypass, Bhopal</a></div></div>
+<div class="info-item"><div class="info-icon">◷</div><div><strong>Response time</strong><span>Usually within 1–2 working days</span></div></div>
+<div class="socials">
+<a class="social-linkedin" href="https://www.linkedin.com/in/uday-bhan7415/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" title="Open LinkedIn">in</a>
+<a class="social-whatsapp" href="https://wa.me/917415992941" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp chat" title="Chat on WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.8a8.5 8.5 0 0 1-12.6 7.4L3 20.5l1.3-4.7a8.5 8.5 0 1 1 16.2-4Z"/><path d="M8.6 8.1c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.2.2-.2.4-.1.6.5.9 1.2 1.6 2.1 2.1.2.1.4.1.6-.1l.7-.8c.2-.2.4-.2.6-.1l1.6.8c.2.1.3.3.3.5 0 .5-.3 1.2-.8 1.5-.5.4-1.1.5-1.8.3-1-.2-2.2-.8-3.3-1.8-1.2-1.1-2-2.5-2.2-3.5-.2-.8.1-1.6.4-2.3Z"/></svg></a>
+</div>
+</aside>
+<section class="form-panel">
+<h2>Send us a message</h2><p>Fill in the form below. Fields marked with * are required.</p>
+<form id="contactForm">
+<div class="form-grid">
+<div class="field"><label for="name">YOUR NAME *</label><input id="name" name="name" autocomplete="name" placeholder="Enter your name" required></div>
+<div class="field"><label for="email">EMAIL ADDRESS *</label><input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required></div>
+<div class="field"><label for="phone">MOBILE NUMBER *</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Enter mobile number" pattern="[0-9+()\-\s]{8,15}" title="Enter a valid phone number" required></div>
+<div class="field full"><label for="subject">SUBJECT *</label><select id="subject" name="subject" required><option value="">Choose a topic</option><option>Course enquiry</option><option>Technical support</option><option value="Refund / Payment problem">Refund / Payment problem</option><option>Partnership</option><option>Feedback or suggestion</option><option>Other</option></select></div>
+<div class="field full"><label for="message">YOUR MESSAGE *</label><textarea id="message" name="message" placeholder="How can we help you?" required></textarea></div>
+<div class="field full" id="utrField" hidden style="display:none"><label for="utr">PAYMENT UTR / TRANSACTION ID *</label><input id="utr" name="utr" placeholder="Enter your UTR or transaction ID"></div>
+</div>
+<button class="btn btn-red" id="submitButton" type="submit">Send message ↗</button>
+<div class="status" id="formStatus" role="status"></div>
+</form>
+</section>
+</div>
+</section>
+
+</main>
+<footer><div class="container footer-inner">
+<a class="brand" href="./index.html"><img src="./logo.png" alt="TECHMITRA logo" onerror="this.style.display='none'"><span>TECH<b>MITRA</b></span></a>
+<div class="footer-links"><a href="./index.html">Home</a><a href="about.html">About</a><a href="./index.html#courses">Courses</a><a href="./index.html#resources">Resources</a><a href="contact.html">Contact</a></div>
+<p>© <span id="year"></span> TECHMITRA. All rights reserved.</p>
+</div></footer>
+<script>
+const menuButton=document.getElementById('menuToggle');
+const nav=document.getElementById('navLinks');
+menuButton.addEventListener('click',()=>{const open=nav.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open));menuButton.textContent=open?'✕':'☰';});
+nav.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{nav.classList.remove('open');menuButton.setAttribute('aria-expanded','false');menuButton.textContent='☰';}));
+document.getElementById('year').textContent=new Date().getFullYear();
+const subjectSelect=document.getElementById('subject');
+const utrField=document.getElementById('utrField');
+const utrInput=document.getElementById('utr');
+function updatePaymentFields(){
+ const isPayment=subjectSelect.value==='Refund / Payment problem';
+ utrField.hidden=!isPayment;
+ utrField.style.display=isPayment?'flex':'none';
+ utrInput.required=isPayment;
+ if(!isPayment){
+   utrInput.value='';
+ }
+}
+subjectSelect.addEventListener('change',updatePaymentFields);
+updatePaymentFields();
+// EmailJS configuration
+const EMAILJS_PUBLIC_KEY = 'PM39RZ6WkmU57FZVy';
+const EMAILJS_SERVICE_ID = 'service_re8dtjt';
+const EMAILJS_TEMPLATE_ID = 'template_78asy6f';
+
+// Load EmailJS and wait for it before trying to send.
+let emailJsReady = null;
+function loadEmailJS(){
+ if(window.emailjs) return Promise.resolve(window.emailjs);
+ if(emailJsReady) return emailJsReady;
+ emailJsReady = new Promise((resolve,reject)=>{
+   const script=document.createElement('script');
+   script.src='https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+   script.onload=()=>{
+     if(!window.emailjs){ reject(new Error('EmailJS library did not initialize')); return; }
+     try{
+       window.emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+       resolve(window.emailjs);
+     }catch(err){ reject(err); }
+   };
+   script.onerror=()=>reject(new Error('Could not load EmailJS. Check internet/ad-blocker.'));
+   document.head.appendChild(script);
+ });
+ return emailJsReady;
+}
+
+document.getElementById('contactForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const form=event.currentTarget;
+ const status=document.getElementById('formStatus');
+ const button=document.getElementById('submitButton');
+ const subject=document.getElementById('subject').value;
+ status.classList.add('show');
+ status.textContent='';
+ button.disabled=true;
+ button.textContent='Sending…';
+ try{
+   const emailjsClient=await loadEmailJS();
+   // Sends text fields including the new phone number; no image upload is used.
+   const result=await emailjsClient.sendForm(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,form);
+   console.info('EmailJS success:',result.status,result.text);
+   status.textContent='Message sent successfully! Check Gmail Inbox and Spam.';
+   form.reset();
+   updatePaymentFields();
+ }catch(error){
+   console.error('EmailJS send failed:',error);
+   const detail=error && (error.text || error.message) ? (error.text || error.message) : 'Unknown error';
+   status.textContent='Message was NOT sent. EmailJS error: '+detail+'. Check the To Email setting and template variables, including phone.';
+ }finally{
+   button.disabled=false;
+   button.textContent='Send message ↗';
+ }
+});
+</script>
+</body>
+</html>

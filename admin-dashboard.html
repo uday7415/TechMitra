@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>TECHMITRA — Admin Management Console</title>
+
+  <!-- Google Fonts: Manrope & DM Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Manrope:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-body: #edf0f5;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --primary-red: #ea1d24;
+      --primary-red-hover: #d11219;
+      --primary-gradient: linear-gradient(135deg, #f0252b 0%, #d80b12 100%);
+      --red-subtle: #fef2f2;
+      --red-border: #fee2e2;
+      --red-glow: rgba(234, 29, 36, 0.28);
+
+      --text-main: #111827;
+      --text-sub: #374151;
+      --text-muted: #6b7280;
+      --text-dim: #9ca3af;
+      --border-color: #e5e7eb;
+
+      --sidebar-width: 260px;
+      --header-height: 70px;
+      --font-heading: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+
+      --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --shadow-hover: 0 14px 30px rgba(234, 29, 36, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04);
+      --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -120px;
+      right: -100px;
+      width: 460px;
+      height: 460px;
+      background: radial-gradient(circle, rgba(234, 29, 36, 0.14) 0%, rgba(234, 29, 36, 0.02) 60%, transparent 75%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ================= SIDEBAR ================= */
+    .admin-sidebar {
+      width: var(--sidebar-width);
+      background: #ffffff;
+      border-right: 1px solid var(--border-color);
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 150;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.03);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header {
+      height: var(--header-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-group img { height: 42px; width: auto; object-fit: contain; }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-weight: 900;
+      font-size: 18px;
+      color: #111827;
+      line-height: 1.1;
+    }
+    .brand-title span { color: var(--primary-red); }
+
+    .admin-badge {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary-red);
+      background: var(--red-subtle);
+      border: 1px solid var(--red-border);
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      width: fit-content;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+    }
+
+    .btn-close-sidebar {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 12px;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1.1px;
+      padding: 12px 14px 4px;
+    }
+
+    .nav-item button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 13.5px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .nav-item button:hover {
+      background: var(--red-subtle);
+      color: var(--primary-red);
+      padding-left: 17px;
+    }
+    .nav-item.active button {
+      background: var(--red-subtle);
+      color: var(--primary-red);
+      border: 1px solid var(--red-border);
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(234, 29, 36, 0.08);
+    }
+    .nav-item button svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2.2;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border-color); background:#ffffff; }
+    .btn-admin-logout {
+      width: 100%;
+      background: #fff5f5;
+      border: 1.5px solid #fecaca;
+      color: var(--primary-red);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .btn-admin-logout:hover {
+      background: var(--primary-red);
+      color: #ffffff;
+      border-color: var(--primary-red);
+      box-shadow: 0 4px 14px var(--red-glow);
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 140;
+    }
+
+    /* ================= MAIN VIEWPORT & HEADER ================= */
+    .admin-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .admin-header {
+      height: var(--header-height);
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      gap: 16px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .btn-mobile-toggle {
+      display: none;
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-main);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .page-title-context h1 {
+      font-family: var(--font-heading);
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .page-title-context p { font-size: 11.5px; color: var(--text-muted); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .admin-profile-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 5px 14px 5px 6px;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-pill);
+    }
+    .admin-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--primary-gradient);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    /* DASHBOARD BODY */
+    .dashboard-body {
+      padding: 26px 32px 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-soft);
+      transition: var(--transition);
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+      border-color: #fca5a5;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon svg { width: 22px; height: 22px; stroke-width: 2.2; }
+
+    .icon-blue { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
+    .icon-green { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+    .icon-red { background: #fee2e2; color: var(--primary-red); border: 1px solid #fecaca; }
+    .icon-purple { background: #faf5ff; color: #7c3aed; border: 1px solid #f3e8ff; }
+
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+    .stat-label { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
+
+    /* TAB PANELS */
+    .tab-panel { display: none; flex-direction: column; gap: 20px; }
+    .tab-panel.active { display: flex; animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .card-panel {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-title::before {
+      content: '';
+      width: 4px;
+      height: 18px;
+      background: var(--primary-red);
+      border-radius: 4px;
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      height: 38px;
+      padding: 8px 14px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-body);
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      outline: none;
+      width: 220px;
+      transition: var(--transition);
+    }
+    .search-input:focus { border-color: var(--primary-red); background: #ffffff; }
+
+    .btn-add-primary {
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-gradient);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--red-glow);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-add-primary:hover { transform: translateY(-1px); filter: brightness(1.05); }
+
+    .btn-outline-action {
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      color: var(--text-sub);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-outline-action:hover {
+      border-color: var(--primary-red);
+      color: var(--primary-red);
+      background: #fff5f5;
+    }
+
+    /* COURSE CARDS GRID */
+    .courses-admin-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .admin-course-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-soft);
+      transition: var(--transition);
+    }
+    .admin-course-card:hover { border-color: #fca5a5; transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+
+    .card-thumb-wrap {
+      width: 100%;
+      height: 145px;
+      position: relative;
+      background: #0f172a;
+      overflow: hidden;
+    }
+    .card-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+    .price-badge-overlay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(17, 24, 39, 0.9);
+      color: #10b981;
+      border: 1px solid #10b981;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .course-card-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .btn-manage-curriculum {
+      width: 100%;
+      padding: 9.5px 14px;
+      border-radius: var(--radius-md);
+      background: var(--red-subtle);
+      border: 1.5px solid var(--red-border);
+      color: var(--primary-red);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-manage-curriculum:hover {
+      background: var(--primary-red);
+      color: #ffffff;
+      border-color: var(--primary-red);
+    }
+
+    .btn-delete-course {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .btn-delete-course:hover { text-decoration: underline; }
+
+    /* DATA TABLES */
+    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table.data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    table.data-table th {
+      padding: 12px 14px;
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    table.data-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-sub);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .status-active { background: #ecfdf5; color: #059669; }
+    .status-progress { background: #eff6ff; color: #1d4ed8; }
+
+    .btn-chat-action {
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--red-subtle);
+      border: 1px solid var(--red-border);
+      color: var(--primary-red);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+    .btn-chat-action:hover {
+      background: var(--primary-red);
+      color: #ffffff;
+      box-shadow: 0 4px 12px var(--red-glow);
+    }
+
+    .copy-chip-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 2px 4px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+    .copy-chip-btn:hover { color: var(--primary-red); }
+
+    /* MODALS */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.55);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 250;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal-box {
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .curriculum-modal-box {
+      width: 100%;
+      max-width: 860px;
+      max-height: 92vh;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+    .modal-box-header h3 { font-family: var(--font-heading); font-size: 18px; font-weight: 800; }
+    .btn-close-modal { background: transparent; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); line-height: 1; }
+
+    .form-row { display: flex; flex-direction: column; gap: 5px; }
+    .form-row label { font-size: 12px; font-weight: 700; color: var(--text-sub); }
+    .form-row input, .form-row select, .form-row textarea {
+      padding: 9px 13px;
+      border: 1.5px solid var(--border-color);
+      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+      border-color: var(--primary-red);
+      background: #ffffff;
+    }
+
+    /* REPEATER ITEM CARDS FOR MULTIPLE VIDEOS, PDFS, MCQS */
+    .repeater-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 8px;
+      position: relative;
+    }
+    .repeater-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-remove-row {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-remove-row:hover { text-decoration: underline; }
+
+    .btn-add-subitem {
+      background: #ffffff;
+      border: 1.5px dashed var(--primary-red);
+      color: var(--primary-red);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      width: fit-content;
+    }
+    .btn-add-subitem:hover {
+      background: var(--red-subtle);
+    }
+
+    .lesson-item-row {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .btn-edit-lesson {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+    .btn-edit-lesson:hover { background: #dbeafe; }
+
+    /* CHAT DRAWER */
+    .chat-drawer {
+      position: fixed;
+      right: -100%;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-left: 1px solid var(--border-color);
+      box-shadow: -10px 0 35px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      z-index: 300;
+      transition: right 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .chat-drawer.open { right: 0; }
+
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .chat-body-stream {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f4f4f5;
+    }
+
+    .chat-bubble {
+      max-width: 82%;
+      padding: 9px 13px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-bubble.admin {
+      align-self: flex-end;
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-bubble.student {
+      align-self: flex-start;
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid var(--border-color);
+      border-bottom-left-radius: 2px;
+    }
+    .chat-bubble-time {
+      font-size: 9.5px;
+      opacity: 0.8;
+      align-self: flex-end;
+      margin-top: 4px;
+    }
+
+    .chat-quick-replies {
+      padding: 8px 12px;
+      background: #ffffff;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .quick-reply-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+    }
+
+    .chat-input-bar {
+      padding: 12px 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+    }
+    .chat-input-bar input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      outline: none;
+    }
+
+    .btn-send-chat {
+      padding: 0 16px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-gradient);
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .admin-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #111827;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      transform: translateY(120px);
+      opacity: 0;
+      transition: all 0.25s ease;
+      z-index: 350;
+    }
+    .admin-toast.show { transform: translateY(0); opacity: 1; }
+
+    @media (max-width: 1200px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .courses-admin-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 992px) {
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.open { transform: translateX(0); }
+      .mobile-overlay.active { display: block; }
+      .btn-close-sidebar { display: block; }
+      .admin-main { margin-left: 0; }
+      .btn-mobile-toggle { display: flex; }
+      .admin-header { padding: 0 18px; }
+      .dashboard-body { padding: 20px 16px 40px; }
+    }
+    @media (max-width: 680px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .courses-admin-grid { grid-template-columns: 1fr; }
+      .search-input { width: 100%; }
+      .curriculum-modal-box { padding: 18px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="index.html" class="brand-group">
+        <img src="logo.png" alt="TECHMITRA Logo" onerror="this.style.display='none'">
+        <div>
+          <span class="brand-title">TECH<span>MITRA</span></span>
+          <div class="admin-badge">Admin Studio</div>
+        </div>
+      </a>
+      <button type="button" class="btn-close-sidebar" id="btnCloseSidebar">&times;</button>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li class="nav-label">Main Controls</li>
+      <li class="nav-item active" data-tab="overview">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          <span>Overview &amp; Metrics</span>
+        </button>
+      </li>
+      <li class="nav-item" data-tab="courses">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span>Courses &amp; Curriculum</span>
+        </button>
+      </li>
+      <li class="nav-item" data-tab="students">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          <span>Students &amp; Live Chat</span>
+        </button>
+      </li>
+      <li class="nav-item" data-tab="enrollments">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+          <span>Student Enrollments</span>
+        </button>
+      </li>
+
+      <li class="nav-label">Academic Content</li>
+      <li class="nav-item" data-tab="announcements">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+          <span>Live Announcements</span>
+        </button>
+      </li>
+      <li class="nav-item" data-tab="resources">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          <span>Notes &amp; PDFs</span>
+        </button>
+      </li>
+      <li class="nav-item" data-tab="tests">
+        <button type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+          <span>Tests &amp; Quizzes</span>
+        </button>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <button type="button" class="btn-admin-logout" id="sidebarLogoutBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <span>Logout Session</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <div class="admin-main">
+    <header class="admin-header">
+      <div class="header-left">
+        <button type="button" class="btn-mobile-toggle" id="btnMobileToggle">☰</button>
+        <div class="page-title-context">
+          <h1 id="currentSectionTitle">Admin Overview &amp; Metrics</h1>
+          <p>Real-time Educational Management Console</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <a href="index.html" target="_blank" style="font-size:12px; font-weight:700; color:var(--text-sub); text-decoration:none;">Website ↗</a>
+        <div class="admin-profile-pill">
+          <div class="admin-avatar">A</div>
+          <span style="font-size:13px; font-weight:700;">Admin Console</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+
+      <!-- STATS -->
+      <section class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon icon-blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          </div>
+          <div>
+            <div class="stat-number" id="metricTotalUsers">0</div>
+            <div class="stat-label">Registered Students</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+          </div>
+          <div>
+            <div class="stat-number" id="metricTotalEnrollments">0</div>
+            <div class="stat-label">Course Enrollments</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon icon-red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-number" id="metricActiveCourses">0</div>
+            <div class="stat-label">Published Courses</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon icon-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-number">Live</div>
+            <div class="stat-label">1-on-1 Student Chat</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 1: OVERVIEW -->
+      <div class="tab-panel active" id="panel-overview">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">System Real-time Control Center</h2>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn-outline-action" onclick="switchAdminTab('courses')">View Courses &rarr;</button>
+              <button type="button" class="btn-add-primary" onclick="switchAdminTab('students')">View Students &rarr;</button>
+            </div>
+          </div>
+          <p style="font-size:13.5px; color:var(--text-sub); line-height:1.65;">
+            Aapka Admin Studio ab <strong>Multiple Videos per Lesson (1.1, 1.2...)</strong>, <strong>Multiple PDFs</strong>, aur <strong>Multiple MCQs</strong> support karta hai. Har lesson ko jab chahein tab <strong>Edit</strong> kar sakte hain.
+          </p>
+        </div>
+      </div>
+
+      <!-- TAB 2: COURSES -->
+      <div class="tab-panel" id="panel-courses">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Published Courses</h2>
+            <div class="panel-actions">
+              <input type="text" class="search-input" id="searchCoursesInput" placeholder="Filter courses...">
+              <button type="button" class="btn-add-primary" id="btnOpenCreateCourseModal">+ Create New Course</button>
+            </div>
+          </div>
+          <div class="courses-admin-grid" id="adminCoursesGrid">
+            <p style="color:var(--text-muted); font-size:13px;">Loading courses...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: STUDENTS & CHAT -->
+      <div class="tab-panel" id="panel-students">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Registered Students Directory</h2>
+            <div class="panel-actions">
+              <input type="text" class="search-input" id="searchStudentsInput" placeholder="Search by name, email or phone...">
+              <button type="button" class="btn-outline-action" id="btnExportStudentsCSV">Export CSV</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Gmail / Email Address</th>
+                  <th>Mobile Number</th>
+                  <th>Joined Date</th>
+                  <th>Live Action</th>
+                </tr>
+              </thead>
+              <tbody id="studentsTbody">
+                <tr><td colspan="5" style="color:var(--text-muted); text-align:center;">Loading registered students...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: ENROLLMENTS -->
+      <div class="tab-panel" id="panel-enrollments">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Student Course Enrollments &amp; Progress</h2>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Student Email (Gmail)</th>
+                  <th>Enrolled Course Name</th>
+                  <th>Progress %</th>
+                  <th>Enrolled Date</th>
+                </tr>
+              </thead>
+              <tbody id="enrollmentsTbody">
+                <tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Loading enrollments...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ANNOUNCEMENTS -->
+      <div class="tab-panel" id="panel-announcements">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Broadcast Live Announcement to All Students</h2>
+          </div>
+          <form id="announcementForm" style="display:flex; flex-direction:column; gap:14px; max-width:650px;">
+            <div class="form-row">
+              <label>Announcement Headline *</label>
+              <input type="text" id="annTitle" placeholder="e.g. Next.js Live Workshop this Saturday!" required>
+            </div>
+            <div class="form-row">
+              <label>Details / Message *</label>
+              <textarea id="annContent" rows="3" placeholder="Write message for students..." required></textarea>
+            </div>
+            <button type="submit" class="btn-add-primary" style="width: fit-content;">Publish Announcement</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 6: GENERAL NOTES (PDFs) -->
+      <div class="tab-panel" id="panel-resources">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">General Study Materials &amp; Notes (PDFs)</h2>
+            <button type="button" class="btn-add-primary" id="btnOpenAddNoteModal">+ Upload General Note (PDF)</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Document Title</th>
+                  <th>Subject</th>
+                  <th>File Link</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="notesAdminTbody">
+                <tr><td colspan="4" style="color:var(--text-muted); text-align:center;">Loading notes...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: TESTS -->
+      <div class="tab-panel" id="panel-tests">
+        <div class="card-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Tests &amp; Assessment Console</h2>
+          </div>
+          <p style="font-size:13px; color:var(--text-muted);">Manage central quizzes and exam schedules.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CREATE COURSE MODAL -->
+  <div class="modal-overlay" id="addCourseModal">
+    <div class="modal-box">
+      <div class="modal-box-header">
+        <h3>Create New Course Package</h3>
+        <button type="button" class="btn-close-modal" id="btnCloseCourseModal">&times;</button>
+      </div>
+
+      <form id="newCourseForm">
+        <div class="form-row">
+          <label>Course Title *</label>
+          <input type="text" id="courseTitleInput" placeholder="e.g. C++ Programming Masterclass" required>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="form-row">
+            <label>Category *</label>
+            <select id="courseCategorySelect">
+              <option value="Programming">Programming</option>
+              <option value="Web Development">Web Development</option>
+              <option value="Python Programming">Python</option>
+              <option value="Linux Fundamentals">Linux</option>
+              <option value="Cloud Computing">Cloud</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Price in ₹ (0 for Free)</label>
+            <input type="number" id="coursePriceInput" value="0" min="0">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Instructor Name *</label>
+          <input type="text" id="courseInstructorInput" placeholder="e.g. Er. Rohit Sharma" required>
+        </div>
+        <div class="form-row">
+          <label>Course Thumbnail Upload</label>
+          <input type="file" id="courseImageFileInput" accept="image/*">
+          <div id="imagePreviewBox" style="width:100%; height:95px; border:1.5px dashed #cbd5e1; border-radius:8px; display:grid; place-items:center; overflow:hidden; margin-top:4px;">
+            <span style="font-size:11.5px; color:#9ca3af;">Default thumbnail will be used</span>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+          <button type="button" class="btn-outline-action" id="btnCancelCourseModal">Cancel</button>
+          <button type="submit" class="btn-add-primary" id="btnSaveCourse">Create Course</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADVANCED CURRICULUM STUDIO (EDIT LESSON + MULTIPLE VIDEOS, PDFS & MCQS) -->
+  <div class="modal-overlay" id="curriculumModal">
+    <div class="curriculum-modal-box">
+      <div class="modal-box-header">
+        <div>
+          <span style="font-size:11px; font-weight:800; color:var(--primary-red); text-transform:uppercase;">Curriculum Studio:</span>
+          <h3 id="curriculumCourseName">Managing Course</h3>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseCurriculumModal">&times;</button>
+      </div>
+
+      <!-- ADD / EDIT LESSON FORM -->
+      <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h4 id="formLessonHeading" style="font-size:15px; font-weight:800; color:#111827;">+ Add Step-by-Step Lesson</h4>
+          <button type="button" id="btnCancelEditMode" style="display:none; background:#fee2e2; border:1px solid #fca5a5; color:var(--primary-red); padding:4px 10px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">✕ Cancel Edit</button>
+        </div>
+        
+        <form id="addLessonForm" style="display:flex; flex-direction:column; gap:14px;">
+          <!-- Lesson Title & Order -->
+          <div style="display:grid; grid-template-columns:1fr 100px; gap:10px;">
+            <div class="form-row">
+              <label>Lesson Chapter / Title *</label>
+              <input type="text" id="lesTitle" placeholder="e.g. Chapter 1: Introduction to Variables" required>
+            </div>
+            <div class="form-row">
+              <label>Order #</label>
+              <input type="number" id="lesOrder" value="1" min="1" required>
+            </div>
+          </div>
+
+          <!-- 1. MULTIPLE VIDEOS REPEATER (1.1, 1.2...) -->
+          <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label style="font-size:12.5px; font-weight:800; color:var(--primary-red);">📹 Lesson Videos (Google Drive Links)</label>
+              <button type="button" class="btn-add-subitem" id="btnAddVideoRow">+ Add Video (e.g. 1.2)</button>
+            </div>
+            <div id="videoRowsContainer"></div>
+          </div>
+
+          <!-- 2. MULTIPLE PDFS REPEATER -->
+          <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label style="font-size:12.5px; font-weight:800; color:var(--primary-red);">📄 Lesson PDF Notes (Google Drive Links)</label>
+              <button type="button" class="btn-add-subitem" id="btnAddPdfRow">+ Add PDF Document</button>
+            </div>
+            <div id="pdfRowsContainer"></div>
+          </div>
+
+          <!-- 3. MULTIPLE MCQS REPEATER -->
+          <div style="border-top:1px dashed #cbd5e1; padding-top:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <label style="font-size:12.5px; font-weight:800; color:var(--primary-red);">📝 MCQ Quizzes for this Lesson</label>
+              <button type="button" class="btn-add-subitem" id="btnAddMcqRow">+ Add MCQ Question</button>
+            </div>
+            <div id="mcqRowsContainer"></div>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button type="submit" class="btn-add-primary" id="btnSaveLesson">Save Lesson to this Course</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- EXISTING LESSONS LIST -->
+      <div>
+        <h4 style="font-size:14.5px; font-weight:800; margin-bottom:10px;">Existing Lessons in this Course:</h4>
+        <div id="courseLessonsListContainer">
+          <p style="font-size:12.5px; color:var(--text-muted);">Loading lessons...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD GENERAL NOTE (PDF) -->
+  <div class="modal-overlay" id="addNoteModal">
+    <div class="modal-box">
+      <div class="modal-box-header">
+        <h3>Upload General PDF Note</h3>
+        <button type="button" class="btn-close-modal" id="btnCloseNoteModal">&times;</button>
+      </div>
+
+      <form id="newNoteForm">
+        <div class="form-row">
+          <label>Document Title *</label>
+          <input type="text" id="noteTitleInput" placeholder="e.g. Engineering Mathematics Formulas" required>
+        </div>
+        <div class="form-row">
+          <label>Subject / Topic *</label>
+          <input type="text" id="noteSubjectInput" placeholder="e.g. Mathematics" required>
+        </div>
+        <div class="form-row">
+          <label>Google Drive / PDF URL *</label>
+          <input type="url" id="noteUrlInput" placeholder="https://drive.google.com/file/d/.../view" required>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+          <button type="button" class="btn-outline-action" id="btnCancelNoteModal">Cancel</button>
+          <button type="submit" class="btn-add-primary">Publish Note</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 1-ON-1 CHAT DRAWER -->
+  <div class="chat-drawer" id="chatDrawer">
+    <div class="chat-header">
+      <div>
+        <h4 id="chatTargetName">Student Name</h4>
+        <p id="chatTargetEmail" style="font-size:11.5px; color:var(--primary-red);">student@gmail.com</p>
+      </div>
+      <button type="button" class="btn-close-modal" id="btnCloseChat">&times;</button>
+    </div>
+    <div class="chat-body-stream" id="chatStream"></div>
+    <div class="chat-quick-replies">
+      <button type="button" class="quick-reply-btn" onclick="sendQuickReply('👋 Hello! How can I help you?')">👋 Hello</button>
+      <button type="button" class="quick-reply-btn" onclick="sendQuickReply('📚 Your lesson material has been updated!')">📚 Updated</button>
+      <button type="button" class="quick-reply-btn" onclick="sendQuickReply('✅ Your query is resolved!')">✅ Resolved</button>
+    </div>
+    <form class="chat-input-bar" id="adminChatForm">
+      <input type="text" id="adminMessageInput" placeholder="Type a message..." required autocomplete="off">
+      <button type="submit" class="btn-send-chat">Send</button>
+    </form>
+  </div>
+
+  <div class="admin-toast" id="adminToast"><span id="toastText">Action done.</span></div>
+
+  <!-- ================= FIREBASE LOGIC ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      setDoc,
+      updateDoc,
+      deleteDoc, 
+      doc, 
+      onSnapshot, 
+      serverTimestamp,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAaELTyJ7Z_Ku53tBldsMYOGscPSe-OrHg",
+      authDomain: "techmitra-web.firebaseapp.com",
+      projectId: "techmitra-web",
+      storageBucket: "techmitra-web.firebasestorage.app",
+      messagingSenderId: "214838320813",
+      appId: "1:214838320813:web:efef413add99454416f024",
+      measurementId: "G-TDDT23B9XN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const adminCoursesGrid = document.getElementById('adminCoursesGrid');
+    const enrollmentsTbody = document.getElementById('enrollmentsTbody');
+    const studentsTbody = document.getElementById('studentsTbody');
+    const notesAdminTbody = document.getElementById('notesAdminTbody');
+
+    const metricTotalUsers = document.getElementById('metricTotalUsers');
+    const metricTotalEnrollments = document.getElementById('metricTotalEnrollments');
+    const metricActiveCourses = document.getElementById('metricActiveCourses');
+
+    let currentSelectedCourseId = null;
+    let editingLessonId = null; // null for New, or string ID when editing
+    let lessonsCache = [];
+    let lessonsUnsubscribe = null;
+    let activeChatStudentUid = null;
+    let chatUnsubscribe = null;
+    let uploadedImageBase64 = "";
+    let studentsListCache = [];
+
+    // Auth Guard
+    onAuthStateChanged(auth, (user) => {
+      const isSessionAdmin = sessionStorage.getItem("techmitra_admin_auth") === "true";
+      if (!user && !isSessionAdmin) {
+        window.location.replace("admin-login.html");
+      }
+    });
+
+    // Thumbnail Preview
+    const imageInput = document.getElementById('courseImageFileInput');
+    const imagePreviewBox = document.getElementById('imagePreviewBox');
+    if (imageInput) {
+      imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          uploadedImageBase64 = event.target.result;
+          imagePreviewBox.innerHTML = `<img src="${uploadedImageBase64}" style="width:100%; height:100%; object-fit:cover;">`;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 1. LISTEN TO REGISTERED STUDENTS
+    onSnapshot(collection(db, "users"), (snapshot) => {
+      metricTotalUsers.textContent = snapshot.size;
+      studentsTbody.innerHTML = '';
+      studentsListCache = [];
+
+      if (snapshot.empty) {
+        studentsTbody.innerHTML = `<tr><td colspan="5" style="color:var(--text-muted); text-align:center;">Abhi koi student register nahi hua hai.</td></tr>`;
+        return;
+      }
+
+      snapshot.forEach(docSnap => {
+        const u = docSnap.data();
+        const uid = docSnap.id;
+        const joinedDate = u.createdAt ? new Date(u.createdAt.toDate ? u.createdAt.toDate() : u.createdAt).toLocaleDateString() : 'Recent';
+        studentsListCache.push({ name: u.name || 'Student', email: u.email || 'N/A', mobile: u.mobile || 'N/A', joined: joinedDate });
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${u.name || 'Student'}</strong></td>
+          <td><span style="color:#1d4ed8; font-weight:700;">${u.email || 'N/A'}</span></td>
+          <td>${u.mobile || 'N/A'}</td>
+          <td>${joinedDate}</td>
+          <td>
+            <button type="button" class="btn-chat-action">Chat</button>
+          </td>
+        `;
+        tr.querySelector('.btn-chat-action').onclick = () => openStudentChat(uid, u.name || 'Student', u.email || '');
+        studentsTbody.appendChild(tr);
+      });
+    });
+
+    // 2. LISTEN TO ENROLLMENTS
+    onSnapshot(collection(db, "enrollments"), (snapshot) => {
+      metricTotalEnrollments.textContent = snapshot.size;
+      enrollmentsTbody.innerHTML = '';
+      if (snapshot.empty) {
+        enrollmentsTbody.innerHTML = `<tr><td colspan="4" style="color:var(--text-muted); text-align:center;">No enrollments yet.</td></tr>`;
+        return;
+      }
+      snapshot.forEach(docSnap => {
+        const en = docSnap.data();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${en.studentEmail || 'Student'}</strong></td>
+          <td>${en.title || 'Course'}</td>
+          <td><span class="badge-status status-active">${en.progressPct || 0}%</span></td>
+          <td>${en.enrolledAt ? new Date(en.enrolledAt).toLocaleDateString() : 'Recent'}</td>
+        `;
+        enrollmentsTbody.appendChild(tr);
+      });
+    });
+
+    // 3. LISTEN TO COURSES
+    onSnapshot(collection(db, "courses"), (snapshot) => {
+      adminCoursesGrid.innerHTML = '';
+      metricActiveCourses.textContent = snapshot.size;
+
+      if (snapshot.empty) {
+        adminCoursesGrid.innerHTML = `<p style="grid-column: 1/-1; color:var(--text-muted); font-size:13.5px;">No courses created yet. Click "+ Create New Course" above!</p>`;
+        return;
+      }
+
+      snapshot.forEach(docSnap => {
+        const c = docSnap.data();
+        const id = docSnap.id;
+        const thumb = c.thumbnail || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=80';
+        const price = parseInt(c.price) || 0;
+
+        const card = document.createElement('div');
+        card.className = 'admin-course-card';
+        card.innerHTML = `
+          <div class="card-thumb-wrap">
+            <img src="${thumb}" alt="${c.title}">
+            <span class="price-badge-overlay">${price === 0 ? 'FREE' : '₹' + price}</span>
+          </div>
+          <div class="course-card-content">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="badge-status status-active" style="font-size:10.5px; text-transform:uppercase;">${c.category}</span>
+                <button type="button" class="btn-delete-course" data-id="${id}">Delete</button>
+              </div>
+              <h4 style="font-size:15px; font-weight:800; margin-top:6px;">${c.title}</h4>
+              <p style="font-size:12px; color:var(--text-muted);">Instructor: ${c.instructor}</p>
+            </div>
+            <button type="button" class="btn-manage-curriculum" data-id="${id}" data-title="${c.title}">
+              <span>Manage Lessons (Videos, PDFs, MCQs) ➔</span>
+            </button>
+          </div>
+        `;
+
+        card.querySelector('.btn-manage-curriculum').onclick = () => openCurriculumManager(id, c.title);
+        card.querySelector('.btn-delete-course').onclick = async () => {
+          if (confirm(`Delete course "${c.title}"?`)) {
+            await deleteDoc(doc(db, "courses", id));
+            showToast('Course deleted.');
+          }
+        };
+
+        adminCoursesGrid.appendChild(card);
+      });
+    });
+
+    // 4. DYNAMIC REPEATERS (VIDEOS, PDFS, MCQS)
+    const videoRowsContainer = document.getElementById('videoRowsContainer');
+    const pdfRowsContainer = document.getElementById('pdfRowsContainer');
+    const mcqRowsContainer = document.getElementById('mcqRowsContainer');
+
+    function createVideoRow(titleVal = "", urlVal = "") {
+      const row = document.createElement('div');
+      row.className = 'repeater-box';
+      const count = videoRowsContainer.children.length + 1;
+      const defTitle = titleVal || `Part 1.${count} Video`;
+
+      row.innerHTML = `
+        <div class="repeater-header">
+          <strong style="font-size:12px; color:var(--text-sub);">📹 Video ${count}</strong>
+          <button type="button" class="btn-remove-row">Remove</button>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <input type="text" class="vid-title-input" placeholder="Title (e.g. 1.1 Intro)" value="${defTitle}" required>
+          <input type="url" class="vid-url-input" placeholder="Google Drive Video Link" value="${urlVal}" required>
+        </div>
+      `;
+      row.querySelector('.btn-remove-row').onclick = () => row.remove();
+      videoRowsContainer.appendChild(row);
+    }
+
+    function createPdfRow(titleVal = "", urlVal = "") {
+      const row = document.createElement('div');
+      row.className = 'repeater-box';
+      const count = pdfRowsContainer.children.length + 1;
+      const defTitle = titleVal || `Part 1.${count} PDF Notes`;
+
+      row.innerHTML = `
+        <div class="repeater-header">
+          <strong style="font-size:12px; color:var(--text-sub);">📄 PDF Document ${count}</strong>
+          <button type="button" class="btn-remove-row">Remove</button>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <input type="text" class="pdf-title-input" placeholder="Title (e.g. 1.1 Notes)" value="${defTitle}" required>
+          <input type="url" class="pdf-url-input" placeholder="Google Drive PDF Link" value="${urlVal}" required>
+        </div>
+      `;
+      row.querySelector('.btn-remove-row').onclick = () => row.remove();
+      pdfRowsContainer.appendChild(row);
+    }
+
+    function createMcqRow(qVal = "", optA = "", optB = "", optC = "", optD = "", correctVal = 0) {
+      const row = document.createElement('div');
+      row.className = 'repeater-box';
+      const count = mcqRowsContainer.children.length + 1;
+
+      row.innerHTML = `
+        <div class="repeater-header">
+          <strong style="font-size:12px; color:var(--primary-red);">📝 MCQ Question ${count}</strong>
+          <button type="button" class="btn-remove-row">Remove</button>
+        </div>
+        <input type="text" class="mcq-q-input" placeholder="Type question text here..." value="${qVal}" required>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:4px;">
+          <input type="text" class="mcq-optA" placeholder="Option A" value="${optA}" required>
+          <input type="text" class="mcq-optB" placeholder="Option B" value="${optB}" required>
+          <input type="text" class="mcq-optC" placeholder="Option C" value="${optC}">
+          <input type="text" class="mcq-optD" placeholder="Option D" value="${optD}">
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+          <label style="font-size:11.5px; font-weight:700;">Correct Option:</label>
+          <select class="mcq-correct-select" style="padding:4px 8px; font-size:12px;">
+            <option value="0" ${correctVal == 0 ? 'selected' : ''}>Option A is Correct</option>
+            <option value="1" ${correctVal == 1 ? 'selected' : ''}>Option B is Correct</option>
+            <option value="2" ${correctVal == 2 ? 'selected' : ''}>Option C is Correct</option>
+            <option value="3" ${correctVal == 3 ? 'selected' : ''}>Option D is Correct</option>
+          </select>
+        </div>
+      `;
+      row.querySelector('.btn-remove-row').onclick = () => row.remove();
+      mcqRowsContainer.appendChild(row);
+    }
+
+    document.getElementById('btnAddVideoRow').onclick = () => createVideoRow();
+    document.getElementById('btnAddPdfRow').onclick = () => createPdfRow();
+    document.getElementById('btnAddMcqRow').onclick = () => createMcqRow();
+
+    // Reset Form to New Lesson Mode
+    function resetLessonFormToNew() {
+      editingLessonId = null;
+      document.getElementById('formLessonHeading').textContent = "+ Add Step-by-Step Lesson";
+      document.getElementById('btnSaveLesson').textContent = "Save Lesson to this Course";
+      document.getElementById('btnCancelEditMode').style.display = "none";
+      document.getElementById('addLessonForm').reset();
+      videoRowsContainer.innerHTML = '';
+      pdfRowsContainer.innerHTML = '';
+      mcqRowsContainer.innerHTML = '';
+      document.getElementById('lesOrder').value = (lessonsCache.length + 1);
+
+      // Default start with 1 video and 1 PDF row ready
+      createVideoRow("1.1 Lesson Video");
+      createPdfRow("1.1 Lesson Notes");
+    }
+
+    document.getElementById('btnCancelEditMode').onclick = resetLessonFormToNew;
+
+    // 5. CURRICULUM STUDIO MANAGER
+    function openCurriculumManager(courseId, courseTitle) {
+      currentSelectedCourseId = courseId;
+      document.getElementById('curriculumCourseName').textContent = courseTitle;
+      document.getElementById('curriculumModal').classList.add('active');
+
+      resetLessonFormToNew();
+      listenToCourseLessons(courseId);
+    }
+
+    function listenToCourseLessons(courseId) {
+      if (lessonsUnsubscribe) lessonsUnsubscribe();
+      const container = document.getElementById('courseLessonsListContainer');
+      container.innerHTML = '<p style="font-size:12.5px; color:var(--text-muted);">Loading lessons...</p>';
+
+      const q = query(collection(db, "courses", courseId, "lessons"), orderBy("order", "asc"));
+      lessonsUnsubscribe = onSnapshot(q, (snapshot) => {
+        container.innerHTML = '';
+        lessonsCache = [];
+
+        if (snapshot.empty) {
+          container.innerHTML = `<p style="font-size:12.5px; color:var(--text-muted);">Is course ke andar abhi koi lesson nahi hai. Upar wale form se pehla lesson add karein!</p>`;
+          return;
+        }
+
+        snapshot.forEach(docSnap => {
+          const l = docSnap.data();
+          const lesId = docSnap.id;
+          lessonsCache.push({ id: lesId, ...l });
+
+          // Support both arrays and legacy single fields
+          const vCount = (l.videos && l.videos.length) ? l.videos.length : (l.videoUrl ? 1 : 0);
+          const pCount = (l.pdfs && l.pdfs.length) ? l.pdfs.length : (l.notesUrl ? 1 : 0);
+          const mCount = (l.mcqs && l.mcqs.length) ? l.mcqs.length : (l.quiz?.question ? 1 : 0);
+
+          const row = document.createElement('div');
+          row.className = 'lesson-item-row';
+          row.innerHTML = `
+            <div>
+              <strong style="font-size:13.5px; color:#111827;">${l.order}. ${l.title}</strong>
+              <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">
+                📹 ${vCount} Video(s) &bull; 📄 ${pCount} PDF(s) &bull; 📝 ${mCount} MCQ(s)
+              </div>
+            </div>
+            <div>
+              <button type="button" class="btn-edit-lesson" data-lesid="${lesId}">✏️ Edit</button>
+              <button type="button" class="btn-delete-course" data-lesid="${lesId}">Delete</button>
+            </div>
+          `;
+
+          // Edit Handler
+          row.querySelector('.btn-edit-lesson').onclick = () => startEditLesson(lesId);
+
+          // Delete Handler
+          row.querySelector('.btn-delete-course').onclick = async () => {
+            if (confirm(`Delete lesson "${l.title}"?`)) {
+              await deleteDoc(doc(db, "courses", courseId, "lessons", lesId));
+              showToast('Lesson deleted.');
+              if (editingLessonId === lesId) resetLessonFormToNew();
+            }
+          };
+
+          container.appendChild(row);
+        });
+
+        if (!editingLessonId) {
+          document.getElementById('lesOrder').value = (lessonsCache.length + 1);
+        }
+      });
+    }
+
+    // 6. START EDIT LESSON (Populates Form with all Videos, PDFs & MCQs)
+    function startEditLesson(lessonId) {
+      const lesson = lessonsCache.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      editingLessonId = lessonId;
+      document.getElementById('formLessonHeading').textContent = `✏️ Editing Lesson: ${lesson.title}`;
+      document.getElementById('btnSaveLesson').textContent = "Update Lesson Changes";
+      document.getElementById('btnCancelEditMode').style.display = "inline-block";
+
+      document.getElementById('lesTitle').value = lesson.title || "";
+      document.getElementById('lesOrder').value = lesson.order || 1;
+
+      // Fill Videos
+      videoRowsContainer.innerHTML = '';
+      if (lesson.videos && Array.isArray(lesson.videos) && lesson.videos.length > 0) {
+        lesson.videos.forEach(v => createVideoRow(v.title, v.driveUrl));
+      } else if (lesson.videoUrl) {
+        createVideoRow("1.1 Lesson Video", lesson.videoUrl);
+      }
+
+      // Fill PDFs
+      pdfRowsContainer.innerHTML = '';
+      if (lesson.pdfs && Array.isArray(lesson.pdfs) && lesson.pdfs.length > 0) {
+        lesson.pdfs.forEach(p => createPdfRow(p.title, p.driveUrl));
+      } else if (lesson.notesUrl) {
+        createPdfRow("1.1 Lesson Notes", lesson.notesUrl);
+      }
+
+      // Fill MCQs
+      mcqRowsContainer.innerHTML = '';
+      if (lesson.mcqs && Array.isArray(lesson.mcqs) && lesson.mcqs.length > 0) {
+        lesson.mcqs.forEach(m => createMcqRow(m.question, m.options[0], m.options[1], m.options[2] || '', m.options[3] || '', m.correct));
+      } else if (lesson.quiz && lesson.quiz.question) {
+        const q = lesson.quiz;
+        createMcqRow(q.question, q.options[0], q.options[1], q.options[2] || '', q.options[3] || '', q.correct);
+      }
+
+      // Scroll to form smoothly
+      document.getElementById('addLessonForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 7. SAVE / UPDATE LESSON (Collects multiple Videos, PDFs & MCQs)
+    const addLessonForm = document.getElementById('addLessonForm');
+    addLessonForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!currentSelectedCourseId) return;
+
+      const title = document.getElementById('lesTitle').value.trim();
+      const order = parseInt(document.getElementById('lesOrder').value) || 1;
+
+      // Collect all videos
+      const videos = [];
+      document.querySelectorAll('#videoRowsContainer .repeater-box').forEach(r => {
+        const t = r.querySelector('.vid-title-input').value.trim();
+        const u = r.querySelector('.vid-url-input').value.trim();
+        if (u) videos.push({ title: t || 'Video', driveUrl: u });
+      });
+
+      // Collect all PDFs
+      const pdfs = [];
+      document.querySelectorAll('#pdfRowsContainer .repeater-box').forEach(r => {
+        const t = r.querySelector('.pdf-title-input').value.trim();
+        const u = r.querySelector('.pdf-url-input').value.trim();
+        if (u) pdfs.push({ title: t || 'PDF Notes', driveUrl: u });
+      });
+
+      // Collect all MCQs
+      const mcqs = [];
+      document.querySelectorAll('#mcqRowsContainer .repeater-box').forEach(r => {
+        const q = r.querySelector('.mcq-q-input').value.trim();
+        const a = r.querySelector('.mcq-optA').value.trim();
+        const b = r.querySelector('.mcq-optB').value.trim();
+        const c = r.querySelector('.mcq-optC').value.trim();
+        const d = r.querySelector('.mcq-optD').value.trim();
+        const correct = parseInt(r.querySelector('.mcq-correct-select').value) || 0;
+
+        if (q && a && b) {
+          mcqs.push({
+            question: q,
+            options: [a, b, c || 'N/A', d || 'N/A'],
+            correct: correct
+          });
+        }
+      });
+
+      const btn = document.getElementById('btnSaveLesson');
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      // Unified Data Payload
+      const payload = {
+        title,
+        order,
+        videos,
+        pdfs,
+        mcqs,
+        // Backward-compatibility fallbacks for any older scripts:
+        videoUrl: videos.length ? videos[0].driveUrl : '',
+        notesUrl: pdfs.length ? pdfs[0].driveUrl : '',
+        quiz: mcqs.length ? mcqs[0] : null,
+        updatedAt: serverTimestamp()
+      };
+
+      try {
+        if (editingLessonId) {
+          // UPDATE EXISTING LESSON
+          await setDoc(doc(db, "courses", currentSelectedCourseId, "lessons", editingLessonId), payload, { merge: true });
+          showToast(`Lesson "${title}" updated successfully!`);
+        } else {
+          // CREATE NEW LESSON
+          payload.createdAt = serverTimestamp();
+          await addDoc(collection(db, "courses", currentSelectedCourseId, "lessons"), payload);
+          showToast(`New lesson added with ${videos.length} video(s) and ${mcqs.length} MCQ(s)!`);
+        }
+
+        resetLessonFormToNew();
+      } catch (err) {
+        console.error(err);
+        alert("Firestore save error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = editingLessonId ? 'Update Lesson Changes' : 'Save Lesson to this Course';
+      }
+    });
+
+    // 8. CREATE COURSE SUBMIT
+    const newCourseForm = document.getElementById('newCourseForm');
+    newCourseForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('courseTitleInput').value.trim();
+      const category = document.getElementById('courseCategorySelect').value;
+      const price = parseInt(document.getElementById('coursePriceInput').value) || 0;
+      const instructor = document.getElementById('courseInstructorInput').value.trim();
+      const thumb = uploadedImageBase64 || 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=80';
+
+      try {
+        document.getElementById('btnSaveCourse').disabled = true;
+        await addDoc(collection(db, "courses"), {
+          title,
+          category,
+          price,
+          instructor,
+          thumbnail: thumb,
+          createdAt: serverTimestamp()
+        });
+        document.getElementById('addCourseModal').classList.remove('active');
+        newCourseForm.reset();
+        uploadedImageBase64 = "";
+        showToast("Course created successfully!");
+      } catch (err) {
+        alert("Firestore error.");
+      } finally {
+        document.getElementById('btnSaveCourse').disabled = false;
+      }
+    });
+
+    // 9. 1-ON-1 CHAT
+    function openStudentChat(studentUid, studentName, studentEmail) {
+      activeChatStudentUid = studentUid;
+      document.getElementById('chatTargetName').textContent = studentName;
+      document.getElementById('chatTargetEmail').textContent = studentEmail;
+      document.getElementById('chatDrawer').classList.add('open');
+
+      if (chatUnsubscribe) chatUnsubscribe();
+      const chatStream = document.getElementById('chatStream');
+      chatStream.innerHTML = '<p style="color:var(--text-muted); font-size:12px; text-align:center;">Loading conversation...</p>';
+
+      const q = query(collection(db, "chats", studentUid, "messages"), orderBy("createdAt", "asc"));
+      chatUnsubscribe = onSnapshot(q, (snapshot) => {
+        chatStream.innerHTML = '';
+        snapshot.forEach(docSnap => {
+          const m = docSnap.data();
+          const bubble = document.createElement('div');
+          bubble.className = `chat-bubble ${m.sender === 'admin' ? 'admin' : 'student'}`;
+          const time = m.createdAt ? new Date(m.createdAt.toDate ? m.createdAt.toDate() : m.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
+          bubble.innerHTML = `<span>${m.text}</span><span class="chat-bubble-time">${time}</span>`;
+          chatStream.appendChild(bubble);
+        });
+        chatStream.scrollTop = chatStream.scrollHeight;
+      });
+    }
+
+    document.getElementById('adminChatForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inp = document.getElementById('adminMessageInput');
+      const text = inp.value.trim();
+      if (!text || !activeChatStudentUid) return;
+      inp.value = '';
+      await addDoc(collection(db, "chats", activeChatStudentUid, "messages"), {
+        sender: "admin",
+        text,
+        createdAt: serverTimestamp()
+      });
+    });
+
+    window.sendQuickReply = async function(preset) {
+      if (!activeChatStudentUid) return;
+      await addDoc(collection(db, "chats", activeChatStudentUid, "messages"), {
+        sender: "admin",
+        text: preset,
+        createdAt: serverTimestamp()
+      });
+    };
+
+    // 10. ANNOUNCEMENTS
+    document.getElementById('announcementForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const title = document.getElementById('annTitle').value.trim();
+      const content = document.getElementById('annContent').value.trim();
+      await setDoc(doc(db, "announcements", "live_announcement"), {
+        title, content, updatedAt: serverTimestamp()
+      });
+      showToast('Announcement broadcasted!');
+      e.target.reset();
+    };
+
+    // 11. GENERAL NOTES (PDFs)
+    onSnapshot(collection(db, "notes"), (snap) => {
+      notesAdminTbody.innerHTML = '';
+      snap.forEach(d => {
+        const n = d.data();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${n.title}</strong></td>
+          <td>${n.subject || 'General'}</td>
+          <td><a href="${n.fileUrl}" target="_blank" style="color:var(--primary-red);">Open ↗</a></td>
+          <td><button type="button" class="btn-delete-course">Delete</button></td>
+        `;
+        tr.querySelector('.btn-delete-course').onclick = async () => {
+          if (confirm(`Delete note "${n.title}"?`)) {
+            await deleteDoc(doc(db, "notes", d.id));
+            showToast('Note deleted.');
+          }
+        };
+        notesAdminTbody.appendChild(tr);
+      });
+    });
+
+    document.getElementById('newNoteForm').onsubmit = async (e) => {
+      e.preventDefault();
+      await addDoc(collection(db, "notes"), {
+        title: document.getElementById('noteTitleInput').value.trim(),
+        subject: document.getElementById('noteSubjectInput').value.trim(),
+        fileUrl: document.getElementById('noteUrlInput').value.trim(),
+        createdAt: serverTimestamp()
+      });
+      document.getElementById('addNoteModal').classList.remove('active');
+      e.target.reset();
+      showToast('Note uploaded!');
+    };
+
+    // Export CSV
+    document.getElementById('btnExportStudentsCSV').onclick = () => {
+      if (studentsListCache.length === 0) return showToast("No students to export.");
+      let csv = "data:text/csv;charset=utf-8,Student Name,Email,Mobile,Joined Date\n";
+      studentsListCache.forEach(s => { csv += `"${s.name}","${s.email}","${s.mobile}","${s.joined}"\n`; });
+      const a = document.createElement("a");
+      a.href = encodeURI(csv);
+      a.download = `students_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    };
+
+    // Search Students Filter
+    document.getElementById('searchStudentsInput').oninput = (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll('#studentsTbody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    };
+
+    // Modals Controls
+    document.getElementById('btnCloseChat').onclick = () => document.getElementById('chatDrawer').classList.remove('open');
+    document.getElementById('btnCloseCurriculumModal').onclick = () => {
+      document.getElementById('curriculumModal').classList.remove('active');
+      if (lessonsUnsubscribe) lessonsUnsubscribe();
+    };
+    document.getElementById('btnOpenCreateCourseModal').onclick = () => document.getElementById('addCourseModal').classList.add('active');
+    document.getElementById('btnCloseCourseModal').onclick = () => document.getElementById('addCourseModal').classList.remove('active');
+    document.getElementById('btnCancelCourseModal').onclick = () => document.getElementById('addCourseModal').classList.remove('active');
+
+    const addNoteModal = document.getElementById('addNoteModal');
+    document.getElementById('btnOpenAddNoteModal').onclick = () => addNoteModal.classList.add('active');
+    document.getElementById('btnCloseNoteModal').onclick = () => addNoteModal.classList.remove('active');
+    document.getElementById('btnCancelNoteModal').onclick = () => addNoteModal.classList.remove('active');
+
+    // Logout
+    document.getElementById('sidebarLogoutBtn').onclick = async () => {
+      sessionStorage.clear();
+      await signOut(auth);
+      window.location.replace("admin-login.html");
+    };
+
+    function showToast(msg) {
+      const toast = document.getElementById('adminToast');
+      toast.querySelector('#toastText').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+
+  <!-- MOBILE TOGGLE & TABS -->
+  <script>
+    const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+    const tabPanels = document.querySelectorAll('.tab-panel');
+    const adminSidebar = document.getElementById('adminSidebar');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+
+    function closeSidebar() {
+      adminSidebar.classList.remove('open');
+      mobileOverlay.classList.remove('active');
+    }
+    document.getElementById('btnMobileToggle').onclick = () => {
+      adminSidebar.classList.add('open');
+      mobileOverlay.classList.add('active');
+    };
+    document.getElementById('btnCloseSidebar').onclick = closeSidebar;
+    mobileOverlay.onclick = closeSidebar;
+
+    window.switchAdminTab = function(tabName) {
+      navItems.forEach(i => i.classList.toggle('active', i.dataset.tab === tabName));
+      tabPanels.forEach(panel => panel.classList.toggle('active', panel.id === `panel-${tabName}`));
+      closeSidebar();
+    };
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        if (item.dataset.tab) switchAdminTab(item.dataset.tab);
+      });
+    });
+  </script>
+</body>
+</html>
